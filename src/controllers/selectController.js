@@ -1,12 +1,14 @@
 const con = require("../utils/conection.js");
-
+var today = new Date();
+var time =
+  today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 function searchProduct(request, response) {
   con.query(
     "SELECT id_product, name, price, img FROM products",
 
     function (err, result) {
       if (err) throw err;
-      console.log("Loaded All Products");
+      console.log(request.path, request.route.methods, "at " + time, "\n");
       return response.json({ result });
     }
   );
@@ -18,12 +20,7 @@ function getProduct(request, response) {
     [request.body.productID],
     function (err, result) {
       if (err) throw err;
-      console.log(
-        "Post Product " +
-          result[0]["name"] +
-          "\n" +
-          "---------------------------------------------"
-      );
+      console.log(request.path, request.route.methods, "at " + time, "\n");
       return response.json({ result });
     }
   );
