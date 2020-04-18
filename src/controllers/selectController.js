@@ -8,7 +8,7 @@ function searchProduct(request, response) {
 
     function (err, result) {
       if (err) throw err;
-      console.log(request.path, request.route.methods, "at " + time, "\n");
+      console.log(request.path, request.route.methods, "at " + time);
       return response.json({ result });
     }
   );
@@ -20,7 +20,7 @@ function getProduct(request, response) {
     [request.body.productID],
     function (err, result) {
       if (err) throw err;
-      console.log(request.path, request.route.methods, "at " + time, "\n");
+      console.log(request.path, request.route.methods, "at " + time);
       return response.json({ result });
     }
   );
