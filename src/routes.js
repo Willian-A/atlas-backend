@@ -7,5 +7,6 @@ const routes = Router();
 routes.get("/product", selectController.searchProduct);
 routes.post("/productPage", selectController.getProduct);
 routes.post("/cadastrar", user.register);
+routes.post("/login", user.login);
 
 module.exports = routes;
