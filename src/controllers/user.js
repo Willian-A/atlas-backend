@@ -6,6 +6,8 @@ var today = new Date();
 var time =
   today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
+const loggedStatus = bcrypt.hashSync("logged", 10);
+
 function register(request, response) {
   if (
     request.body.name == "" ||
@@ -38,7 +40,9 @@ function register(request, response) {
               function (err) {
                 if (err) throw err;
                 console.log(request.body.name, "Registered at", time);
-                return response.sendStatus(200);
+                return response
+                  .status(200)
+                  .send("Registrado com Sucesso! Faça Login");
               }
             );
           } else {
@@ -55,23 +59,20 @@ function register(request, response) {
 }
 
 function login(request, response) {
-  if (request.body.email == "" || request.body.password == "") {
+  if (request.body.email == null || request.body.password == null) {
     console.log("Empty Fields at", time);
     return response.status(422).send("Campos com Conteudo Inválido");
   } else {
-    const passwordHash = bcrypt.hashSync(request.body.password, 10);
     con.query(
       "SELECT name, email, password FROM users WHERE email = ?",
       [request.body.email],
       function (err, result) {
         if (err) throw err;
-        const comparedHash = bcrypt.compareSync(
-          request.body.password,
-          result[0].password
-        );
-        if (comparedHash === true) {
+        if (bcrypt.compareSync(request.body.password, result[0].password)) {
           console.log(result[0].name, "Logged at", time);
-          return response.sendStatus(200);
+          return response
+            .status(200)
+            .send({ name: result[0].name, cart: [], status: loggedStatus });
         } else {
           console.log(result[0].name, "Invalid Credentials  at", time);
           return response.status(401).send("Email ou Senha Inválido");
