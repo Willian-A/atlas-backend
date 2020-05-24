@@ -70,11 +70,17 @@ function login(request, response) {
         if (err) throw err;
         if (bcrypt.compareSync(request.body.password, result[0].password)) {
           console.log(result[0].name, "Logged at", time);
-          return response
-            .status(200)
-            .send({ name: result[0].name, cart: [], status: loggedStatus });
+          response.cookie(
+            "profile",
+            { name: result[0].name, cart: [], status: loggedStatus },
+            {
+              maxAge: 3600000,
+              httpOnly: true,
+            }
+          );
+          return response.sendStatus(200);
         } else {
-          console.log(result[0].name, "Invalid Credentials  at", time);
+          console.log(result[0].name, "Invalid Credentials at", time);
           return response.status(401).send("Email ou Senha Inválido");
         }
       }
