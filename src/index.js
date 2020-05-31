@@ -1,9 +1,12 @@
 const express = require("express");
-const routes = require("./routes");
 const cors = require("cors");
-var cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 
-var app = express();
+const userRoute = require("./routes/user.js");
+const productRoute = require("./routes/product.js");
+const cartRoute = require("./routes/cart.js");
+
+const app = express();
 app.use(cookieParser());
 
 app.use(
@@ -14,7 +17,9 @@ app.use(
 );
 
 app.use(express.json());
-app.use(routes);
+app.use(userRoute);
+app.use(productRoute);
+app.use(cartRoute);
 
 // Metodos HTTP: GET, POST, PUT, DELETE
 
@@ -22,8 +27,6 @@ app.use(routes);
 // Query Params: request.query (Filstros, ordenação, paginação, ...)
 // Route Params: request.params (identificar um recurso na alteração ou remoção)
 // Body: request.body
-
-// MongoDB (Não-relacional)
 
 app.listen(process.env.PORT || 3333);
 console.log("Listening: 3333");
