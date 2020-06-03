@@ -11,7 +11,7 @@ const Register = (request, response) => {
     cpf: "",
   };
 
-  function setValue() {
+  function setValues() {
     for (let field in user) {
       user[field] = request.body[field];
     }
@@ -50,7 +50,7 @@ const Register = (request, response) => {
     });
   }
 
-  setValue();
+  setValues();
   register();
 };
 
@@ -60,7 +60,7 @@ const Login = (request, response) => {
     password: "",
   };
 
-  function setValue() {
+  function setValues() {
     for (let field in user) {
       user[field] = request.body[field];
     }
@@ -95,7 +95,7 @@ const Login = (request, response) => {
     });
   }
 
-  setValue();
+  setValues();
   login();
 };
 

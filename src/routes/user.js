@@ -1,21 +1,18 @@
 const { Router } = require("express");
-const bcrypt = require("bcryptjs");
 const routes = Router();
 
-const cpfFilter = require("../utils/cpfFilter.js");
+const filters = require("../services/filters.js");
 const user = require("../controllers/user.js");
 
 routes.post(
   "/cadastrar",
   (request, response, next) => {
-    for (let field in request.body) {
-      if (request.body[field] === "" || request.body[field] === null) {
-        return response.status(422).send("Preencha Todos os Campos");
-      } else if (
-        !cpfFilter.cpfFilter(request.body["cpf"].split(/[.\-/]/).join(""))
-      ) {
-        return response.status(422).send("CPF Inválido");
-      }
+    if (filters.isEmpty(request)) {
+      return response.status(422).send("Preencha Todos os Campos");
+    } else if (
+      !filters.cpfFilter(request.body["cpf"].split(/[.\-/]/).join(""))
+    ) {
+      return response.status(422).send("CPF Inválido");
     }
     next();
   },
@@ -24,18 +21,13 @@ routes.post(
 routes.post(
   "/login",
   (request, response, next) => {
-    if (request.cookies.profile == null || request.cookies.profile == "") {
-      request.cookies.profile = { name: "", cart: [], status: "" };
+    if (filters.isEmpty(request)) {
+      return response.status(422).send("Preencha Todos os Campos");
     }
-    if (bcrypt.compareSync("logged", request.cookies.profile["status"])) {
+    if (filters.checkCookie(request)) {
+      return response.status(400).send("Cookie Inválido");
+    } else if (filters.checkLogin(request)) {
       return response.status(409).send("Você Já Está Logado");
-    } else {
-      for (let field in request.body) {
-        if (request.body[field] == "" || request.body[field] == null) {
-          return response.status(422).send("Preencha Todos os Campos");
-        } else {
-        }
-      }
     }
     next();
   },
@@ -44,11 +36,12 @@ routes.post(
 routes.get(
   "/logout",
   (request, response, next) => {
-    if (request.cookies.profile == null || request.cookies.profile == "") {
+    if (filters.checkCookie(request)) {
+      return response.status(400).send("Cookie Inválido");
+    } else if (!filters.checkLogin(request)) {
       return response.status(409).send("Você Não Está Logado");
-    } else {
-      next();
     }
+    next();
   },
   user.Logout
 );

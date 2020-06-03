@@ -6,7 +6,7 @@ const addIntoCart = (request, response) => {
     status: "",
   };
 
-  function setValue() {
+  function setValues() {
     for (let field in profile) {
       profile[field] = request.cookies.profile[field];
     }
@@ -49,7 +49,7 @@ const addIntoCart = (request, response) => {
     return response.sendStatus(200);
   }
 
-  setValue();
+  setValues();
   addCart();
 };
 
@@ -60,7 +60,7 @@ const getCart = (request, response) => {
   };
   let identifiers = [];
 
-  function setValue() {
+  function setValues() {
     for (let field in profile) {
       profile[field] = request.cookies.profile[field];
     }
@@ -95,7 +95,7 @@ const getCart = (request, response) => {
     );
   }
 
-  setValue();
+  setValues();
   selectProd();
 };
 module.exports = { addIntoCart, getCart };
