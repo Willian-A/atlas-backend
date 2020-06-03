@@ -10,7 +10,6 @@ const isEmpty = (request) => {
 };
 
 const checkCookie = (request) => {
-  console.log(request.cookies.profile);
   if (request.cookies.profile == null || request.cookies.profile == "") {
     return true;
   } else {
