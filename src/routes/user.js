@@ -23,11 +23,12 @@ routes.post(
   (request, response, next) => {
     if (filters.isEmpty(request)) {
       return response.status(422).send("Preencha Todos os Campos");
-    }
-    if (filters.checkCookie(request)) {
-      return response.status(400).send("Cookie Inválido");
+    } else if (filters.checkCookie(request)) {
+      request.cookies.profile = { name: "", cart: [], status: "" };
     } else if (filters.checkLogin(request)) {
       return response.status(409).send("Você Já Está Logado");
+    } else {
+      return response.status(400).send("Cookie Inválido");
     }
     next();
   },
