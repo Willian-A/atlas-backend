@@ -7,9 +7,7 @@ const cart = require("../controllers/cart.js");
 routes.get(
   "/cart",
   (request, response, next) => {
-    if (filters.checkCookie(request)) {
-      return response.status(400).send("Cookie Inválido");
-    } else if (!filters.checkLogin(request)) {
+    if (filters.checkLogin(request)) {
       return response.status(409).send("Você Não Está Logado");
     } else {
       next();
@@ -21,9 +19,7 @@ routes.get(
 routes.post(
   "/addCart",
   (request, response, next) => {
-    if (filters.checkCookie(request)) {
-      return response.status(400).send("Cookie Inválido");
-    } else if (!filters.checkLogin(request)) {
+    if (filters.checkLogin(request)) {
       return response.status(409).send("Você Não Está Logado");
     } else {
       next();

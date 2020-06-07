@@ -71,31 +71,35 @@ const getCart = (request, response) => {
 
   function handleQuantity(obj, array) {
     let newObj = [];
+    let totalPrice = 0;
     obj.map((objValue) => {
       array.map((value, index) => {
         if (value == objValue["id_product"]) {
           objValue["quantity"] = profile["cart"][index]["quantity"];
+          totalPrice += objValue["quantity"] * objValue["price"];
           newObj.push(objValue);
         }
       });
     });
-    return newObj;
+    return [newObj, totalPrice];
   }
 
-  function selectProd() {
+  function selectCartProd() {
     con.query(
       `SELECT id_product, name, price, img FROM products WHERE id_product in (${identifiers.join(
         ", "
       )})`,
       function (err, result) {
         if (err) throw err;
-        let newResult = handleQuantity(result, identifiers);
-        return response.status(200).send({ newResult });
+        let values = handleQuantity(result, identifiers);
+        let newResult = values[0];
+        let totalPrice = values[1];
+        return response.status(200).send({ newResult, totalPrice });
       }
     );
   }
 
   setValues();
-  selectProd();
+  selectCartProd();
 };
 module.exports = { addIntoCart, getCart };

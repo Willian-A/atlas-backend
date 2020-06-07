@@ -18,9 +18,9 @@ const checkCookie = (request) => {
 };
 
 const checkLogin = (request) => {
-  if (bcrypt.compareSync("logged", request.cookies.profile["status"])) {
+  if (request.cookies.profile == null || request.cookies.profile == "") {
     return true;
-  } else {
+  } else if (bcrypt.compareSync("logged", request.cookies.profile["status"])) {
     return false;
   }
 };
