@@ -2,7 +2,7 @@ const { Router } = require("express");
 const routes = Router();
 
 const filters = require("../services/filters.js");
-const cart = require("../controllers/cart.js");
+const cart = require("../controllers/cartController.js");
 
 routes.get(
   "/cart",
@@ -13,7 +13,7 @@ routes.get(
       return response.status(409).send("Você Não Está Logado");
     }
   },
-  cart.getCart
+  cart.getCartList
 );
 
 routes.post(
