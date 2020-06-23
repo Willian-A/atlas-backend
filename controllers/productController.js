@@ -1,6 +1,6 @@
 const con = require("../utils/conection.js");
 
-const searchProduct = (request, response) => {
+function getAllProducts(request, response) {
   con.query("SELECT id_product, name, price, img FROM products", function (
     err,
     result
@@ -8,9 +8,9 @@ const searchProduct = (request, response) => {
     if (err) throw err;
     return response.json({ result });
   });
-};
+}
 
-const getProduct = (request, response) => {
+function getProduct(request, response) {
   con.query(
     "SELECT id_product, name, price, img, description FROM products where id_product = ?",
     [request.body.productID],
@@ -19,6 +19,6 @@ const getProduct = (request, response) => {
       return response.json({ result });
     }
   );
-};
+}
 
-module.exports = { searchProduct, getProduct };
+module.exports = { getAllProducts, getProduct };

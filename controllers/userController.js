@@ -1,26 +1,11 @@
 const bcrypt = require("bcryptjs");
 const con = require("../utils/conection.js");
 
-const loggedStatus = bcrypt.hashSync("logged", 10);
-
-const Register = (request, response) => {
-  let user = {
-    name: "",
-    email: "",
-    password: "",
-    cpf: "",
-  };
-
-  function setValues() {
-    for (let field in user) {
-      user[field] = request.body[field];
-    }
-  }
-
+function Register(request, response) {
   function userExists(callback) {
     con.query(
       "SELECT 1 FROM users WHERE email = ? or cpf = ?",
-      [user.email, user.cpf],
+      [request.body.email, request.body.cpf],
       function (err, result) {
         if (err) return callback(err);
         return callback(result.length);
@@ -28,7 +13,7 @@ const Register = (request, response) => {
     );
   }
 
-  function register() {
+  function registerUser() {
     userExists((result) => {
       if (result > 0) {
         return response.status(422).send("Email ou CPF Já Cadastrados");
@@ -36,10 +21,10 @@ const Register = (request, response) => {
         con.query(
           "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
           [
-            user.name,
-            user.email,
+            request.body.name,
+            request.body.email,
             bcrypt.hashSync(request.body.password, 10),
-            user.cpf,
+            request.body.cpf,
           ],
           function (err) {
             if (err) throw err;
@@ -50,26 +35,14 @@ const Register = (request, response) => {
     });
   }
 
-  setValues();
-  register();
-};
+  registerUser();
+}
 
-const Login = (request, response) => {
-  let user = {
-    email: "",
-    password: "",
-  };
-
-  function setValues() {
-    for (let field in user) {
-      user[field] = request.body[field];
-    }
-  }
-
+function Login(request, response) {
   function userExists(callback) {
     con.query(
       "SELECT name, email, password FROM users WHERE email = ?",
-      [user.email],
+      [request.body.email],
       function (err, result) {
         if (err) return callback(err);
         return callback(result);
@@ -77,14 +50,21 @@ const Login = (request, response) => {
     );
   }
 
-  function login() {
+  function makeLogin() {
     userExists((result) => {
-      if (bcrypt.compareSync(user.password, result[0].password)) {
+      if (
+        result.length == 1 &&
+        bcrypt.compareSync(request.body.password, result[0].password)
+      ) {
         response.cookie(
           "profile",
-          { name: result[0].name, cart: [], status: loggedStatus },
           {
-            maxAge: 3600000,
+            name: result[0].name,
+            cart: [],
+            status: bcrypt.hashSync("logged", 10),
+          },
+          {
+            maxAge: 5400000,
             httpOnly: true,
           }
         );
@@ -95,14 +75,13 @@ const Login = (request, response) => {
     });
   }
 
-  setValues();
-  login();
-};
+  makeLogin();
+}
 
-const Logout = (request, response) => {
+function Logout(request, response) {
   if (request.cookies.profile != null) {
     response.clearCookie("profile", { path: "/" });
     return response.sendStatus(200);
   }
-};
-module.exports = { Login, Register, Logout };
+}
+module.exports = { Register, Login, Logout };
