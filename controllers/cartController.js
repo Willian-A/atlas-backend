@@ -41,18 +41,10 @@ function addIntoCart(request, response) {
 }
 
 function getCartList(request, response) {
-  let profile = {
-    cart: [],
-    status: "",
-  };
   let identifiers = [];
 
-  function setValues() {
-    for (let field in profile) {
-      profile[field] = request.cookies.profile[field];
-    }
-
-    profile["cart"].map((value) => {
+  function getProductIdentifier() {
+    request.cookies.profile["cart"].map((value) => {
       identifiers.push(value["id"]);
     });
   }
@@ -63,7 +55,8 @@ function getCartList(request, response) {
     obj.map((objValue) => {
       array.map((value, index) => {
         if (value == objValue["id_product"]) {
-          objValue["quantity"] = profile["cart"][index]["quantity"];
+          objValue["quantity"] =
+            request.cookies.profile["cart"][index]["quantity"];
           totalPrice += objValue["quantity"] * objValue["price"];
           newObj.push(objValue);
         }
@@ -73,24 +66,25 @@ function getCartList(request, response) {
   }
 
   function selectCartProd() {
-    con.query(
-      `SELECT id_product, name, price, img FROM products WHERE id_product in (${identifiers.join(
-        ", "
-      )})`,
-      function (err, result) {
-        if (err) throw err;
-        let values = handleQuantity(result, identifiers);
-        let newResult = values[0];
-        let totalPrice = values[1];
-        return response.status(200).send({ newResult, totalPrice });
-      }
-    );
+    if (request.cookies.profile["cart"].length === 0) {
+      return response.status(400).send("Nenhum Produto no Carrinho");
+    } else {
+      con.query(
+        `SELECT id_product, name, price, img FROM products WHERE id_product in (${identifiers.join(
+          ", "
+        )})`,
+        function (err, result) {
+          if (err) throw err;
+          let values = handleQuantity(result, identifiers);
+          return response
+            .status(200)
+            .send({ newResult: values[0], totalPrice: values[1] });
+        }
+      );
+    }
   }
 
-  setValues();
-  if (profile["cart"].length === 0) {
-    return response.status(400).send("Nenhum Produto no Carrinho");
-  }
+  getProductIdentifier();
   selectCartProd();
 }
 

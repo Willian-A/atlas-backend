@@ -17,7 +17,7 @@ routes.get(
 );
 
 routes.post(
-  "/addCart",
+  "/cart",
   (request, response, next) => {
     if (filters.checkLogin(request)) {
       next();

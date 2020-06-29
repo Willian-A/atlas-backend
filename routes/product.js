@@ -3,6 +3,6 @@ const selectController = require("../controllers/productController.js");
 const routes = Router();
 
 routes.get("/product", selectController.getAllProducts);
-routes.post("/productPage", selectController.getProduct);
+routes.post("/product", selectController.getProduct);
 
 module.exports = routes;
