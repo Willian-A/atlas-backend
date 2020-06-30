@@ -21,11 +21,9 @@ routes.post(
 routes.post(
   "/login",
   (request, response, next) => {
-    if (filters.isEmpty(request)) {
+    if (!filters.filters.isEmpty(request)) {
       return response.status(422).send("Preencha Todos os Campos");
-    } else if (filters.checkCookie(request)) {
-      request.cookies.profile = { name: "", cart: [], status: "" };
-    } else if (filters.checkLogin(request)) {
+    } else if (filters.filters.checkLogin(request)) {
       return response.status(409).send("Você Já Está Logado");
     }
 
@@ -36,7 +34,7 @@ routes.post(
 routes.get(
   "/logout",
   (request, response, next) => {
-    if (!filters.checkLogin(request)) {
+    if (!filters.filters.checkLogin(request)) {
       return response.status(409).send("Você Não Está Logado");
     }
     next();
@@ -45,10 +43,10 @@ routes.get(
 );
 
 routes.get("/logged", (request, response) => {
-  if (!filters.checkLogin(request)) {
-    return response.status(200).send(false);
-  } else {
+  if (filters.filters.checkLogin(request)) {
     return response.status(200).send(true);
+  } else {
+    return response.status(200).send(false);
   }
 });
 

@@ -44,7 +44,7 @@ function Login(request, response) {
       "SELECT name, email, password FROM users WHERE email = ?",
       [request.body.email],
       function (err, result) {
-        if (err) console.log(err);
+        if (err) return callback(err);
         return callback(result);
       }
     );
