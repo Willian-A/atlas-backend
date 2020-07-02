@@ -1,62 +1,50 @@
 const bcrypt = require("bcryptjs");
 const con = require("../utils/conection.js");
 
-function Register(request, response) {
+function Register(req, res) {
   function userExists(callback) {
     con.query(
       "SELECT 1 FROM users WHERE email = ? or cpf = ?",
-      [request.body.email, request.body.cpf],
+      [req.body.email, req.body.cpf],
       function (err, result) {
-        if (err) return callback(err);
+        if (err) console.log(err);
         return callback(result.length);
       }
     );
   }
 
-  function registerUser() {
-    userExists((result) => {
-      if (result > 0) {
-        return response.status(422).send("Email ou CPF Já Cadastrados");
-      } else {
-        con.query(
-          "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
-          [
-            request.body.name,
-            request.body.email,
-            bcrypt.hashSync(request.body.password, 10),
-            request.body.cpf,
-          ],
-          function (err) {
-            if (err) throw err;
-            return response.sendStatus(200);
-          }
-        );
-      }
-    });
-  }
-
-  registerUser();
+  userExists((result) => {
+    if (result > 0) {
+      res.status(422).send("Email ou CPF Já Cadastrados");
+    } else {
+      con.query(
+        "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
+        [
+          req.body.name,
+          req.body.email,
+          bcrypt.hashSync(req.body.password, 10),
+          req.body.cpf,
+        ],
+        function (err) {
+          if (err) throw err;
+        }
+      );
+    }
+    res.end();
+  });
 }
 
-function Login(request, response) {
-  function userExists(callback) {
-    con.query(
-      "SELECT name, email, password FROM users WHERE email = ?",
-      [request.body.email],
-      function (err, result) {
-        if (err) console.log(err);
-        return callback(result);
-      }
-    );
-  }
-
-  function makeLogin() {
-    userExists((result) => {
+function Login(req, res) {
+  con.query(
+    "SELECT name, email, password FROM users WHERE email = ?",
+    [req.body.email],
+    function (err, result) {
+      if (err) console.log(err);
       if (
-        result.length == 1 &&
-        bcrypt.compareSync(request.body.password, result[0].password)
+        result.length > 0 &&
+        bcrypt.compareSync(req.body.password, result[0].password)
       ) {
-        response.cookie(
+        res.cookie(
           "profile",
           {
             name: result[0].name,
@@ -64,18 +52,16 @@ function Login(request, response) {
             status: bcrypt.hashSync("logged", 10),
           },
           {
-            maxAge: 5400000,
+            maxAge: 3600000 * 1.5,
             httpOnly: true,
           }
         );
-        return response.sendStatus(200);
       } else {
-        return response.status(401).send("Email ou Senha Inválido");
+        res.status(401).send("Email ou Senha Inválido");
       }
-    });
-  }
-
-  makeLogin();
+      res.end();
+    }
+  );
 }
 
 function Logout(request, response) {
@@ -84,4 +70,5 @@ function Logout(request, response) {
     return response.sendStatus(200);
   }
 }
+
 module.exports = { Register, Login, Logout };

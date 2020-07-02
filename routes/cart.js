@@ -6,24 +6,24 @@ const cart = require("../controllers/cartController.js");
 
 routes.get(
   "/cart",
-  (request, response, next) => {
-    if (filters.checkLogin(request)) {
-      next();
-    } else {
-      return response.status(409).send("Você Não Está Logado");
+  (req, res, next) => {
+    if (!filters.checkLogin(req, res)) {
+      console.log("ERRO");
+      return res.status(409).send("Você Não Está Logado");
     }
+    next();
   },
   cart.getCartList
 );
 
 routes.post(
   "/cart",
-  (request, response, next) => {
-    if (filters.checkLogin(request)) {
-      next();
-    } else {
-      return response.status(409).send("Você Não Está Logado");
+  (req, res, next) => {
+    if (!filters.checkLogin(req, res)) {
+      console.log("ERRO");
+      return res.status(409).send("Você Não Está Logado");
     }
+    next();
   },
   cart.addIntoCart
 );

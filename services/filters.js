@@ -1,25 +1,25 @@
 const bcrypt = require("bcryptjs");
 
-const filters = {
-  checkLogin(request) {
-    if (
-      request.cookies.profile &&
-      bcrypt.compareSync("logged", request.cookies.profile["status"])
-    ) {
-      return true;
-    }
-  },
-  isEmpty(request) {
-    for (let field in request.body) {
-      if (request.body[field]) {
-        return true;
+function isEmpty(req, res) {
+  function fieldHandler() {
+    for (let field in req.body) {
+      if (!req.body[field]) {
+        return false;
       }
     }
-  },
-  cpfFilter(CPF) {
-    var Soma;
+    return true;
+  }
+  if (!fieldHandler()) {
+    res.status(422).send("Preencha Todos os Campos");
+    return true;
+  }
+}
+
+function cpfFilter(req, res) {
+  function cpfHandler() {
+    let CPF = req.body["cpf"].split(/[.\-/]/).join("");
+    var Soma = 0;
     var Resto;
-    Soma = 0;
     if (
       CPF.length != 11 ||
       CPF == "00000000000" ||
@@ -49,7 +49,26 @@ const filters = {
     if (Resto == 10 || Resto == 11) Resto = 0;
     if (Resto != parseInt(CPF.substring(10, 11))) return false;
     return true;
-  },
-};
+  }
+  if (!cpfHandler()) {
+    res.status(422).send("CPF Inválido");
+    return true;
+  }
+}
 
-module.exports = { filters };
+function checkLogin(req) {
+  function profileHandler() {
+    if (
+      req.cookies.profile &&
+      bcrypt.compareSync("logged", req.cookies.profile["status"])
+    ) {
+      return false;
+    }
+    return true;
+  }
+  if (!profileHandler()) {
+    return true;
+  }
+}
+
+module.exports = { isEmpty, cpfFilter, checkLogin };

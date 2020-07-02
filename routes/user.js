@@ -6,13 +6,9 @@ const user = require("../controllers/userController.js");
 
 routes.post(
   "/cadastrar",
-  (request, response, next) => {
-    if (filters.isEmpty(request)) {
-      return response.status(422).send("Preencha Todos os Campos");
-    } else if (
-      !filters.cpfFilter(request.body["cpf"].split(/[.\-/]/).join(""))
-    ) {
-      return response.status(422).send("CPF Inválido");
+  (req, res, next) => {
+    if (filters.isEmpty(req, res) || filters.cpfFilter(req, res)) {
+      return console.log("ERRO");
     }
     next();
   },
@@ -20,34 +16,37 @@ routes.post(
 );
 routes.post(
   "/login",
-  (request, response, next) => {
-    if (!filters.filters.isEmpty(request)) {
-      return response.status(422).send("Preencha Todos os Campos");
-    } else if (filters.filters.checkLogin(request)) {
-      return response.status(409).send("Você Já Está Logado");
+  (req, res, next) => {
+    if (filters.isEmpty(req, res)) {
+      return console.log("ERRO");
+    } else if (filters.checkLogin(req, res)) {
+      console.log("ERRO");
+      return res.status(409).send("Você Já Está Logado");
     }
-
     next();
   },
   user.Login
 );
 routes.get(
   "/logout",
-  (request, response, next) => {
-    if (!filters.filters.checkLogin(request)) {
-      return response.status(409).send("Você Não Está Logado");
+  (req, res, next) => {
+    if (!filters.checkLogin(req, res)) {
+      console.log("ERRO");
+      return res.status(409).send("Você Não Está Logado");
     }
     next();
   },
   user.Logout
 );
 
-routes.get("/logged", (request, response) => {
-  if (filters.filters.checkLogin(request)) {
-    return response.status(200).send(true);
+routes.get("/logged", (req, res) => {
+  let result;
+  if (filters.checkLogin(req)) {
+    result = true;
   } else {
-    return response.status(200).send(false);
+    result = false;
   }
+  return res.status(200).send(result);
 });
 
 module.exports = routes;
