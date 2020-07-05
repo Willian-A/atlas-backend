@@ -4,7 +4,7 @@ function getAllProducts(request, response) {
   con.query(
     "SELECT id_product, name, FORMAT(price,2) as price, image FROM products",
     function (err, result) {
-      if (err) throw err;
+      if (err) return console.log(err);
       return response.json({ result });
     }
   );
@@ -12,10 +12,10 @@ function getAllProducts(request, response) {
 
 function getProduct(request, response) {
   con.query(
-    "SELECT id_product, name, price, image, description FROM products where id_product = ?",
+    "SELECT id_product, name, FORMAT(price,2) as price, image, description FROM products where id_product = ?",
     [request.body.productID],
     function (err, result) {
-      if (err) throw err;
+      if (err) return console.log(err);
       return response.json({ result });
     }
   );

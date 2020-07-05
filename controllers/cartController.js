@@ -1,5 +1,5 @@
 const con = require("../utils/conection.js");
-var decimalFormat = new Intl.NumberFormat("en-US", {
+const decimalFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
@@ -77,15 +77,13 @@ function getCartList(request, response) {
           ", "
         )})`,
         function (err, result) {
-          if (err) throw err;
+          if (err) return console.log(err);
 
           let values = handleQuantity(result, identifiers);
-          return response
-            .status(200)
-            .send({
-              newResult: values[0],
-              totalPrice: decimalFormat.format(values[1]),
-            });
+          return response.status(200).send({
+            newResult: values[0],
+            totalPrice: decimalFormat.format(values[1]),
+          });
         }
       );
     }

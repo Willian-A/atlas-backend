@@ -1,13 +1,16 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const userRoute = require("./routes/user.js");
 const productRoute = require("./routes/product.js");
 const cartRoute = require("./routes/cart.js");
 
 const app = express();
-app.use(cookieParser());
 
 app.use(
   cors({
@@ -15,8 +18,10 @@ app.use(
     credentials: true,
   })
 );
-
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
+
 app.use(userRoute);
 app.use(productRoute);
 app.use(cartRoute);

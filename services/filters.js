@@ -1,4 +1,4 @@
-const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 function isEmpty(req, res) {
   function fieldHandler() {
@@ -60,7 +60,14 @@ function checkLogin(req) {
   function profileHandler() {
     if (
       req.cookies.profile &&
-      bcrypt.compareSync("logged", req.cookies.profile["status"])
+      jwt.verify(
+        req.cookies.profile.token,
+        process.env.SECRET,
+        (err, decoded) => {
+          if (err) return console.log("TOKEN INVÁLIDO");
+          return decoded.auth;
+        }
+      )
     ) {
       return false;
     }
