@@ -1,50 +1,50 @@
 const con = require("../utils/conection.js");
 
-function addIntoCart(request, response) {
+function addIntoCart(req, res) {
   function pushIntoCart() {
-    return request.cookies.profile["cart"].push({
-      id: request.body.productID,
+    return req.cookies.profile["cart"].push({
+      id: req.body.productID,
       quantity: 1,
     });
   }
 
   function findIndex() {
-    return request.cookies.profile["cart"]
+    return req.cookies.profile["cart"]
       .map(function (e) {
         return e.id;
       })
-      .indexOf(request.body["productID"]);
+      .indexOf(req.body["productID"]);
   }
 
   function checkCart(array) {
-    return array["id"] === request.body["productID"];
+    return array["id"] === req.body["productID"];
   }
 
   function addCart() {
-    if (request.cookies.profile["cart"].length == 0) {
+    if (req.cookies.profile["cart"].length == 0) {
       pushIntoCart();
     } else {
-      if (request.cookies.profile["cart"].some(checkCart)) {
+      if (req.cookies.profile["cart"].some(checkCart)) {
         let position = findIndex();
-        request.cookies.profile["cart"][position]["quantity"] += 1;
+        req.cookies.profile["cart"][position]["quantity"] += 1;
       } else {
         pushIntoCart();
       }
     }
-    response.cookie("profile", request.cookies.profile, {
+    res.cookie("profile", req.cookies.profile, {
       maxAge: 900000,
       httpOnly: true,
     });
-    return response.sendStatus(200);
+    return res.sendStatus(200);
   }
   addCart();
 }
 
-function getCartList(request, response) {
+function getCartList(req, res) {
   let identifiers = [];
 
   function getProductIdentifier() {
-    request.cookies.profile["cart"].map((value) => {
+    req.cookies.profile["cart"].map((value) => {
       identifiers.push(value["id"]);
     });
   }
@@ -55,8 +55,7 @@ function getCartList(request, response) {
     obj.map((objValue) => {
       array.map((value, index) => {
         if (value == objValue["id_product"]) {
-          objValue["quantity"] =
-            request.cookies.profile["cart"][index]["quantity"];
+          objValue["quantity"] = req.cookies.profile["cart"][index]["quantity"];
           totalPrice += objValue["quantity"] * objValue["price"];
           newObj.push(objValue);
         }
@@ -66,8 +65,8 @@ function getCartList(request, response) {
   }
 
   function selectCartProd() {
-    if (request.cookies.profile["cart"].length === 0) {
-      return response.status(400).send("Nenhum Produto no Carrinho");
+    if (req.cookies.profile["cart"].length === 0) {
+      return res.status(400).send("Nenhum Produto no Carrinho");
     } else {
       con.query(
         `SELECT id_product, name, price, img FROM products WHERE id_product in (${identifiers.join(
@@ -76,7 +75,7 @@ function getCartList(request, response) {
         function (err, result) {
           if (err) throw err;
           let values = handleQuantity(result, identifiers);
-          return response
+          return res
             .status(200)
             .send({ newResult: values[0], totalPrice: values[1] });
         }

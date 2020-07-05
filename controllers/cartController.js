@@ -1,4 +1,7 @@
 const con = require("../utils/conection.js");
+var decimalFormat = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+});
 
 function addIntoCart(request, response) {
   function pushIntoCart() {
@@ -70,15 +73,19 @@ function getCartList(request, response) {
       return response.status(400).send("Nenhum Produto no Carrinho");
     } else {
       con.query(
-        `SELECT id_product, name, price, img FROM products WHERE id_product in (${identifiers.join(
+        `SELECT id_product, name, FORMAT(price,2) as price, image FROM products WHERE id_product in (${identifiers.join(
           ", "
         )})`,
         function (err, result) {
           if (err) throw err;
+
           let values = handleQuantity(result, identifiers);
           return response
             .status(200)
-            .send({ newResult: values[0], totalPrice: values[1] });
+            .send({
+              newResult: values[0],
+              totalPrice: decimalFormat.format(values[1]),
+            });
         }
       );
     }

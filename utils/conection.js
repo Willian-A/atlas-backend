@@ -2,11 +2,11 @@ var mysql = require("mysql");
 var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
-  database: "bdatlas"
+  password: "6mRqU3Rnc0hwvqjhaT>Adjud;Y+T?]",
+  database: "bdatlas",
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
 });
 

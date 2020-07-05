@@ -1,11 +1,11 @@
 const bcrypt = require("bcryptjs");
 const con = require("../utils/conection.js");
 
-function Register(request, response) {
+function Register(req, rer) {
   function userExists(callback) {
     con.query(
       "SELECT 1 FROM users WHERE email = ? or cpf = ?",
-      [request.body.email, request.body.cpf],
+      [req.body.email, req.body.cpf],
       function (err, result) {
         if (err) return callback(err);
         return callback(result.length);
@@ -16,19 +16,19 @@ function Register(request, response) {
   function registerUser() {
     userExists((result) => {
       if (result > 0) {
-        return response.status(422).send("Email ou CPF Já Cadastrados");
+        return rer.status(422).send("Email ou CPF Já Cadastrados");
       } else {
         con.query(
           "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
           [
-            request.body.name,
-            request.body.email,
-            bcrypt.hashSync(request.body.password, 10),
-            request.body.cpf,
+            req.body.name,
+            req.body.email,
+            bcrypt.hashSync(req.body.password, 10),
+            req.body.cpf,
           ],
           function (err) {
             if (err) throw err;
-            return response.sendStatus(200);
+            return rer.sendStatus(200);
           }
         );
       }
@@ -38,11 +38,11 @@ function Register(request, response) {
   registerUser();
 }
 
-function Login(request, response) {
+function Login(req, rer) {
   function userExists(callback) {
     con.query(
       "SELECT name, email, password FROM users WHERE email = ?",
-      [request.body.email],
+      [req.body.email],
       function (err, result) {
         if (err) return callback(err);
         return callback(result);
@@ -54,9 +54,9 @@ function Login(request, response) {
     userExists((result) => {
       if (
         result.length == 1 &&
-        bcrypt.compareSync(request.body.password, result[0].password)
+        bcrypt.compareSync(req.body.password, result[0].password)
       ) {
-        response.cookie(
+        rer.cookie(
           "profile",
           {
             name: result[0].name,
@@ -68,9 +68,9 @@ function Login(request, response) {
             httpOnly: true,
           }
         );
-        return response.sendStatus(200);
+        return rer.sendStatus(200);
       } else {
-        return response.status(401).send("Email ou Senha Inválido");
+        return rer.status(401).send("Email ou Senha Inválido");
       }
     });
   }
@@ -78,10 +78,10 @@ function Login(request, response) {
   makeLogin();
 }
 
-function Logout(request, response) {
-  if (request.cookies.profile != null) {
-    response.clearCookie("profile", { path: "/" });
-    return response.sendStatus(200);
+function Logout(req, rer) {
+  if (req.cookies.profile != null) {
+    rer.clearCookie("profile", { path: "/" });
+    return rer.sendStatus(200);
   }
 }
 module.exports = { Register, Login, Logout };
