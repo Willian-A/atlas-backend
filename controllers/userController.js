@@ -52,24 +52,13 @@ function Login(req, res) {
     );
   }
 
-  function registerToken(token, result) {
-    con.query(
-      "INSERT INTO sessions (token, user_id) VALUES (?,?)",
-      [token, result.user_id],
-      function (err, result) {
-        if (err) console.log(err);
-        return;
-      }
-    );
-  }
-
   getUser((result) => {
     if (
       result.length > 0 &&
       bcrypt.compareSync(req.body.password, result[0].password)
     ) {
       let token = jwt.sign({ auth: true }, process.env.SECRET, {
-        expiresIn: 300, // expires in 5 min
+        expiresIn: 60 * 1.5, // (60s * time) expires in 1.5h
       });
       res.cookie(
         "profile",
@@ -78,11 +67,10 @@ function Login(req, res) {
           cart: [],
         },
         {
-          maxAge: 300000,
+          maxAge: 3600000 * 1.5, // (60s * time) expires in 1.5h
           httpOnly: true,
         }
       );
-      registerToken(token, result[0]);
     } else {
       res.status(401).send("Email ou Senha Inválido");
     }
