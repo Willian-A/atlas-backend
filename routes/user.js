@@ -5,16 +5,19 @@ const filters = require("../utils/filters.js");
 const user = require("../controllers/userController.js");
 
 //rota de cadastro de usuarios
-routes.post(
-  "/cadastrar",
-  (req, res, next) => {
-    if (filters.isEmpty(req, res) || filters.cpfFilter(req, res)) {
-      return;
-    }
-    next();
-  },
-  user.Register
-);
+routes.post("/cadastrar", async (req, res, next) => {
+  if (filters.isEmpty(req, res) || filters.cpfFilter(req, res)) {
+    return;
+  } else {
+    await user.Register(req.body, res).then((result) => {
+      if (result.error) {
+        return res.status(result.status).send(result.error);
+      } else {
+        return res.sendStatus(200);
+      }
+    });
+  }
+});
 
 //rota de login de usuarios
 routes.post("/login", async (req, res, next) => {

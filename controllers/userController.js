@@ -4,46 +4,40 @@ const jwt = require("jsonwebtoken");
 const createQuery = require("../utils/createQuery.js");
 
 //registra novos usuarios
-function Register(req, res) {
+function Register(data, res) {
   //retorna se algum usuario que já tenha o email ou cpf
   const userExist = createQuery.createQuery(
     "SELECT 1 FROM users WHERE email = ? or cpf = ?",
-    [req.body.email, req.body.cpf]
-  );
-
-  //registra o usuario no BD
-  const registerUser = createQuery.createQuery(
-    "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
-    [
-      req.body.name,
-      req.body.email,
-      bcrypt.hashSync(req.body.password, 10),
-      req.body.cpf,
-    ]
+    [data.email, data.cpf]
   );
 
   //função principal
-  userExist
+  return userExist
     .then((results) => {
       if (results.length > 0) {
-        res.status(422).send("Email ou CPF Já Cadastrados");
+        return { error: "Email ou CPF Já Cadastrados", status: 422 };
       } else {
-        registerUser.then(res.end());
+        //registra o usuario no BD
+        createQuery.createQuery(
+          "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
+          [data.name, data.email, bcrypt.hashSync(data.password, 10), data.cpf]
+        );
+        return { error: false };
       }
     })
     .catch(function (err) {
-      res.status(500).send("Erro Interno");
+      console.log(err);
+      return { error: "Erro Interno", status: 500 };
     });
 }
 
 async function Login(data, res) {
-  let result;
   const userExist = createQuery.createQuery(
     "SELECT user_id,name, email, password FROM users WHERE email = ?",
     [data.email]
   );
 
-  result = await userExist
+  return await userExist
     .then((result) => {
       if (
         result.length > 0 &&
@@ -63,16 +57,15 @@ async function Login(data, res) {
             httpOnly: true,
           }
         );
-        return { error: false, status: 200 };
+        return { error: false };
       } else {
         return { error: "Email ou Senha Inválido", status: 401 };
       }
     })
     .catch(function (err) {
+      console.log(err);
       return { error: "Erro Interno", status: 500 };
     });
-
-  return result;
 }
 
 function Logout(req, res) {
