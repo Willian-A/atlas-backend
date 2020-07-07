@@ -17,18 +17,21 @@ routes.post(
 );
 
 //rota de login de usuarios
-routes.post(
-  "/login",
-  (req, res, next) => {
-    if (filters.isEmpty(req, res)) {
-      return;
-    } else if (filters.checkLogin(req, res)) {
-      return res.status(409).send("Você Já Está Logado");
-    }
-    next();
-  },
-  user.Login
-);
+routes.post("/login", async (req, res, next) => {
+  if (filters.isEmpty(req, res)) {
+    return;
+  } else if (filters.checkLogin(req, res)) {
+    return res.status(409).send("Você Já Está Logado");
+  } else {
+    await user.Login(req.body, res).then((result) => {
+      if (result.error) {
+        return res.status(result.status).send(result.error);
+      } else {
+        return res.sendStatus(200);
+      }
+    });
+  }
+});
 
 //rota para logout de usuarios
 routes.get(

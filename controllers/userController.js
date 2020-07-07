@@ -36,17 +36,18 @@ function Register(req, res) {
     });
 }
 
-function Login(req, res) {
+async function Login(data, res) {
+  let result;
   const userExist = createQuery.createQuery(
     "SELECT user_id,name, email, password FROM users WHERE email = ?",
-    [req.body.email]
+    [data.email]
   );
 
-  userExist
+  result = await userExist
     .then((result) => {
       if (
         result.length > 0 &&
-        bcrypt.compareSync(req.body.password, result[0].password)
+        bcrypt.compareSync(data.password, result[0].password)
       ) {
         let token = jwt.sign({ auth: true }, process.env.SECRET, {
           expiresIn: 3600 * 1.5, // (3600s * time) expires in 1.5h
@@ -62,14 +63,16 @@ function Login(req, res) {
             httpOnly: true,
           }
         );
+        return { error: false, status: 200 };
       } else {
-        res.status(401).send("Email ou Senha Inválido");
+        return { error: "Email ou Senha Inválido", status: 401 };
       }
-      res.end();
     })
     .catch(function (err) {
-      res.status(500).send("Erro Interno");
+      return { error: "Erro Interno", status: 500 };
     });
+
+  return result;
 }
 
 function Logout(req, res) {
