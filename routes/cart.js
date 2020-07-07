@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const routes = Router();
 
-const filters = require("../services/filters.js");
+const filters = require("../utils/filters.js");
 const cart = require("../controllers/cartController.js");
 
 routes.get(
