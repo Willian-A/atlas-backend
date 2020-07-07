@@ -11,8 +11,8 @@
     "author": "",
     "license": "ISC",
     "scripts": {
-        "dev": "nodemon src/index.js",
-        "start": "node src/index.js"
+        "dev": "nodemon app.js",
+        "start": "node app.js"
     },
     "dependencies": {
         "axios": "^0.19.2",

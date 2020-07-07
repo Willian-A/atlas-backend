@@ -34,4 +34,4 @@ app.use(cartRoute);
 // Body: request.body
 
 app.listen(process.env.PORT || 3333);
-console.log("Listening: 3333");
+console.log(`Listening: ${process.env.PORT}`);
