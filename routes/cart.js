@@ -8,7 +8,6 @@ routes.get(
   "/cart",
   (req, res, next) => {
     if (!filters.checkLogin(req, res)) {
-      console.log("ERRO");
       return res.status(409).send("Você Não Está Logado");
     }
     next();
@@ -20,7 +19,6 @@ routes.post(
   "/cart",
   (req, res, next) => {
     if (!filters.checkLogin(req, res)) {
-      console.log("ERRO");
       return res.status(409).send("Você Não Está Logado");
     }
     next();

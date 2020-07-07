@@ -1,4 +1,3 @@
-const con = require("../utils/conection.js");
 const createQuery = require("../utils/createQuery.js");
 
 const decimalFormat = new Intl.NumberFormat("en-US", {
@@ -62,24 +61,25 @@ function getCartList(request, response) {
   }
 
   //identifica a quantidade do produto
-  function handleQuantity(obj, array) {
-    let newObj = [];
+  function handleQuantity(results, productsID) {
+    let newResults = [];
     let totalPrice = 0;
-    obj.map((objValue) => {
-      array.map((value, index) => {
-        if (value == objValue["id_product"]) {
-          objValue["quantity"] =
+    results.map((resultObj) => {
+      productsID.map((productID, index) => {
+        if (productID == resultObj["id_product"]) {
+          resultObj["quantity"] =
             request.cookies.profile["cart"][index]["quantity"];
-          totalPrice += objValue["quantity"] * objValue["price"];
-          newObj.push(objValue);
+          totalPrice += resultObj["quantity"] * resultObj["price"];
+          newResults.push(resultObj);
         }
       });
     });
-    return [newObj, totalPrice];
+    return [newResults, totalPrice];
   }
 
   //função principal
   function selectCartProd() {
+    getProductIdentifier();
     if (request.cookies.profile["cart"].length === 0) {
       return response.status(400).send("Nenhum Produto no Carrinho");
     } else {
@@ -99,7 +99,6 @@ function getCartList(request, response) {
     }
   }
 
-  getProductIdentifier();
   selectCartProd();
 }
 

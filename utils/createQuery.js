@@ -1,5 +1,6 @@
 const con = require("../utils/conection.js");
 
+//cria uma query para o BD
 function createQuery(query, fields) {
   return new Promise((result, error) => {
     con.query(query, fields, function (err, queryResult) {

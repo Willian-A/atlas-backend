@@ -3,27 +3,32 @@ const jwt = require("jsonwebtoken");
 
 const createQuery = require("../utils/createQuery.js");
 
+//registra novos usuarios
 function Register(req, res) {
-  createQuery
-    .createQuery("SELECT 1 FROM users WHERE email = ? or cpf = ?", [
+  //retorna se algum usuario que já tenha o email ou cpf
+  const userExist = createQuery.createQuery(
+    "SELECT 1 FROM users WHERE email = ? or cpf = ?",
+    [req.body.email, req.body.cpf]
+  );
+
+  //registra o usuario no BD
+  const registerUser = createQuery.createQuery(
+    "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
+    [
+      req.body.name,
       req.body.email,
+      bcrypt.hashSync(req.body.password, 10),
       req.body.cpf,
-    ])
+    ]
+  );
+
+  //função principal
+  userExist
     .then((results) => {
       if (results.length > 0) {
         res.status(422).send("Email ou CPF Já Cadastrados");
       } else {
-        createQuery
-          .createQuery(
-            "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
-            [
-              req.body.name,
-              req.body.email,
-              bcrypt.hashSync(req.body.password, 10),
-              req.body.cpf,
-            ]
-          )
-          .then(res.end());
+        registerUser.then(res.end());
       }
     })
     .catch(function (err) {
@@ -32,11 +37,12 @@ function Register(req, res) {
 }
 
 function Login(req, res) {
-  createQuery
-    .createQuery(
-      "SELECT user_id,name, email, password FROM users WHERE email = ?",
-      [req.body.email]
-    )
+  const userExist = createQuery.createQuery(
+    "SELECT user_id,name, email, password FROM users WHERE email = ?",
+    [req.body.email]
+  );
+
+  userExist
     .then((result) => {
       if (
         result.length > 0 &&
