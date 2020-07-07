@@ -1,9 +1,13 @@
 const con = require("../utils/conection.js");
+const createQuery = require("../utils/createQuery.js");
+
 const decimalFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
+//adiciona produtos no carrinho
 function addIntoCart(request, response) {
+  //adiciona produtos no array do carrinho
   function pushIntoCart() {
     return request.cookies.profile["cart"].push({
       id: request.body.productID,
@@ -11,6 +15,7 @@ function addIntoCart(request, response) {
     });
   }
 
+  //retorna a posição de cada produto no array
   function findIndex() {
     return request.cookies.profile["cart"]
       .map(function (e) {
@@ -19,10 +24,12 @@ function addIntoCart(request, response) {
       .indexOf(request.body["productID"]);
   }
 
+  //verifica se o id do produto já está no carrinho
   function checkCart(array) {
     return array["id"] === request.body["productID"];
   }
 
+  //função principal
   function addCart() {
     if (request.cookies.profile["cart"].length == 0) {
       pushIntoCart();
@@ -43,15 +50,18 @@ function addIntoCart(request, response) {
   addCart();
 }
 
+//retorna toda a lista do carrinho
 function getCartList(request, response) {
   let identifiers = [];
 
+  //coleta o ID de cada produto no carrinho
   function getProductIdentifier() {
     request.cookies.profile["cart"].map((value) => {
       identifiers.push(value["id"]);
     });
   }
 
+  //identifica a quantidade do produto
   function handleQuantity(obj, array) {
     let newObj = [];
     let totalPrice = 0;
@@ -68,24 +78,24 @@ function getCartList(request, response) {
     return [newObj, totalPrice];
   }
 
+  //função principal
   function selectCartProd() {
     if (request.cookies.profile["cart"].length === 0) {
       return response.status(400).send("Nenhum Produto no Carrinho");
     } else {
-      con.query(
-        `SELECT id_product, name, FORMAT(price,2) as price, image FROM products WHERE id_product in (${identifiers.join(
-          ", "
-        )})`,
-        function (err, result) {
-          if (err) return console.log(err);
-
-          let values = handleQuantity(result, identifiers);
-          return response.status(200).send({
+      createQuery
+        .createQuery(
+          `SELECT id_product, name, FORMAT(price,2) as price, image FROM products WHERE id_product in (${identifiers.join(
+            ", "
+          )})`
+        )
+        .then((results) => {
+          let values = handleQuantity(results, identifiers);
+          response.status(200).send({
             newResult: values[0],
             totalPrice: decimalFormat.format(values[1]),
           });
-        }
-      );
+        });
     }
   }
 
