@@ -1,4 +1,6 @@
 var mysql = require("mysql");
+
+//conexão com o BD
 var connection = mysql.createConnection({
   host: "localhost",
   user: "root",

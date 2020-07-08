@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+//filtro para campos vazios
 function isEmpty(req, res) {
   function fieldHandler() {
     for (let field in req.body) {
@@ -15,6 +16,7 @@ function isEmpty(req, res) {
   }
 }
 
+//filtro para validar CPF
 function cpfFilter(req, res) {
   function cpfHandler() {
     let CPF = req.body["cpf"].split(/[.\-/]/).join("");
@@ -56,6 +58,7 @@ function cpfFilter(req, res) {
   }
 }
 
+//filtro para verificar login
 function checkLogin(req) {
   function profileHandler() {
     if (

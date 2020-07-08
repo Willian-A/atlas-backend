@@ -1,3 +1,4 @@
+//forma universão para detectar erro e retornar a response
 function errorHandler(promise, res) {
   if (promise.error) {
     return res.status(promise.status).send(promise.error);
