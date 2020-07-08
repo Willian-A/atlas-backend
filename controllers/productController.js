@@ -1,24 +1,19 @@
 const con = require("../utils/conection.js");
+const createQuery = require("../utils/createQuery.js");
 
-function getAllProducts(request, response) {
-  con.query(
-    "SELECT id_product, name, FORMAT(price,2) as price, image FROM products",
-    function (err, result) {
-      if (err) return console.log(err);
-      return response.json({ result });
-    }
+async function getAllProducts(res) {
+  const result = await createQuery.createQuery(
+    "SELECT id_product, name, FORMAT(price,2) as price, image FROM products"
   );
+  return res.json({ result });
 }
 
-function getProduct(request, response) {
-  con.query(
+async function getProduct(data, response) {
+  const result = await createQuery.createQuery(
     "SELECT id_product, name, FORMAT(price,2) as price, image, description FROM products where id_product = ?",
-    [request.body.productID],
-    function (err, result) {
-      if (err) return console.log(err);
-      return response.json({ result });
-    }
+    [data.productID]
   );
+  return response.json({ result });
 }
 
 module.exports = { getAllProducts, getProduct };

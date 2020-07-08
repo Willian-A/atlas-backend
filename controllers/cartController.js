@@ -5,57 +5,57 @@ const decimalFormat = new Intl.NumberFormat("en-US", {
 });
 
 //adiciona produtos no carrinho
-function addIntoCart(request, response) {
+async function addIntoCart(data, res, cookie) {
   //adiciona produtos no array do carrinho
   function pushIntoCart() {
-    return request.cookies.profile["cart"].push({
-      id: request.body.productID,
+    return cookie.profile["cart"].push({
+      id: data.productID,
       quantity: 1,
     });
   }
 
   //retorna a posição de cada produto no array
   function findIndex() {
-    return request.cookies.profile["cart"]
+    return cookie.profile["cart"]
       .map(function (e) {
         return e.id;
       })
-      .indexOf(request.body["productID"]);
+      .indexOf(data["productID"]);
   }
 
   //verifica se o id do produto já está no carrinho
   function checkCart(array) {
-    return array["id"] === request.body["productID"];
+    return array["id"] === data["productID"];
   }
 
   //função principal
   function addCart() {
-    if (request.cookies.profile["cart"].length == 0) {
+    if (cookie.profile["cart"].length == 0) {
       pushIntoCart();
     } else {
-      if (request.cookies.profile["cart"].some(checkCart)) {
+      if (cookie.profile["cart"].some(checkCart)) {
         let position = findIndex();
-        request.cookies.profile["cart"][position]["quantity"] += 1;
+        cookie.profile["cart"][position]["quantity"] += 1;
       } else {
         pushIntoCart();
       }
     }
-    response.cookie("profile", request.cookies.profile, {
+    res.cookie("profile", cookie.profile, {
       maxAge: 900000,
       httpOnly: true,
     });
-    return response.sendStatus(200);
+    return { error: false };
   }
-  addCart();
+  return addCart();
 }
 
 //retorna toda a lista do carrinho
-function getCartList(request, response) {
+async function getCartList(cookie, res) {
   let identifiers = [];
 
   //coleta o ID de cada produto no carrinho
   function getProductIdentifier() {
-    request.cookies.profile["cart"].map((value) => {
+    cookie.profile["cart"].map((value) => {
       identifiers.push(value["id"]);
     });
   }
@@ -67,8 +67,7 @@ function getCartList(request, response) {
     results.map((resultObj) => {
       productsID.map((productID, index) => {
         if (productID == resultObj["id_product"]) {
-          resultObj["quantity"] =
-            request.cookies.profile["cart"][index]["quantity"];
+          resultObj["quantity"] = cookie.profile["cart"][index]["quantity"];
           totalPrice += resultObj["quantity"] * resultObj["price"];
           newResults.push(resultObj);
         }
@@ -78,12 +77,12 @@ function getCartList(request, response) {
   }
 
   //função principal
-  function selectCartProd() {
+  async function selectCartProd() {
     getProductIdentifier();
-    if (request.cookies.profile["cart"].length === 0) {
-      return response.status(400).send("Nenhum Produto no Carrinho");
+    if (cookie.profile["cart"].length === 0) {
+      return res.status(400).send("Nenhum Produto no Carrinho");
     } else {
-      createQuery
+      return createQuery
         .createQuery(
           `SELECT id_product, name, FORMAT(price,2) as price, image FROM products WHERE id_product in (${identifiers.join(
             ", "
@@ -91,15 +90,22 @@ function getCartList(request, response) {
         )
         .then((results) => {
           let values = handleQuantity(results, identifiers);
-          response.status(200).send({
-            newResult: values[0],
-            totalPrice: decimalFormat.format(values[1]),
-          });
+          return {
+            error: false,
+            info: {
+              newResult: values[0],
+              totalPrice: decimalFormat.format(values[1]),
+            },
+          };
+        })
+        .catch((err) => {
+          console.log(err);
+          return { error: "Erro Interno", status: 500 };
         });
     }
   }
 
-  selectCartProd();
+  return await selectCartProd();
 }
 
 module.exports = { addIntoCart, getCartList };
