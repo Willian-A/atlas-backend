@@ -2,7 +2,8 @@
 function errorHandler(promise, res) {
   if (promise.error) {
     return res.status(promise.status).send(promise.error);
-  } else if (promise.info) {
+  }
+  if (promise.info) {
     return res.status(200).send(promise.info);
   }
   return res.sendStatus(200);
