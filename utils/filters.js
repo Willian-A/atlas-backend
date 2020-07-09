@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 
-//filtro para campos vazios
+// filtro para campos vazios
 function isEmpty(req, res) {
   function fieldHandler() {
-    for (let field in req.body) {
+    for (const field in req.body) {
       if (!req.body[field]) {
         return false;
       }
@@ -16,12 +16,12 @@ function isEmpty(req, res) {
   }
 }
 
-//filtro para validar CPF
+// filtro para validar CPF
 function cpfFilter(req, res) {
   function cpfHandler() {
-    let CPF = req.body["cpf"].split(/[.\-/]/).join("");
-    var Soma = 0;
-    var Resto;
+    const CPF = req.body.cpf.split(/[.\-/]/).join("");
+    let Soma = 0;
+    let Resto;
     if (
       CPF.length != 11 ||
       CPF == "00000000000" ||
@@ -34,10 +34,11 @@ function cpfFilter(req, res) {
       CPF == "77777777777" ||
       CPF == "88888888888" ||
       CPF == "99999999999"
-    )
+    ) {
       return false;
+    }
     for (i = 1; i <= 9; i++)
-      Soma = Soma + parseInt(CPF.substring(i - 1, i)) * (11 - i);
+      Soma += parseInt(CPF.substring(i - 1, i)) * (11 - i);
     Resto = (Soma * 10) % 11;
 
     if (Resto == 10 || Resto == 11) Resto = 0;
@@ -45,7 +46,7 @@ function cpfFilter(req, res) {
 
     Soma = 0;
     for (i = 1; i <= 10; i++)
-      Soma = Soma + parseInt(CPF.substring(i - 1, i)) * (12 - i);
+      Soma += parseInt(CPF.substring(i - 1, i)) * (12 - i);
     Resto = (Soma * 10) % 11;
 
     if (Resto == 10 || Resto == 11) Resto = 0;
@@ -58,7 +59,7 @@ function cpfFilter(req, res) {
   }
 }
 
-//filtro para verificar login
+// filtro para verificar login
 function checkLogin(req) {
   function profileHandler() {
     if (
