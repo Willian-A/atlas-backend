@@ -3,3 +3,4 @@
 *.rar
 node_modules/
 .env
+controllers/.eslintrc.json
