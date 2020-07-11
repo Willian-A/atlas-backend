@@ -4,8 +4,8 @@ const selectController = require("../controllers/productController.js");
 const routes = Router();
 
 // rota de acesso a todos os produtos
-routes.get("/product", (req, res) => {
-  selectController.getAllProducts(res);
+routes.get("/product:limit", (req, res) => {
+  selectController.getAllProducts(res, req.params.limit);
 });
 
 // rota de acessoa a um unico produto
