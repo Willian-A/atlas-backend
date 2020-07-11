@@ -2,6 +2,7 @@ const createQuery = require("../utils/createQuery.js");
 
 //  retorna todos os produtos do BD
 async function getAllProducts(res, limit) {
+  //  define o tipo da query, se é apenas alguns produtos ou todos
   let query;
   if (limit >= 1) {
     query = `SELECT id_product, name, FORMAT(price,2) as price, image FROM products LIMIT ${limit}`;
