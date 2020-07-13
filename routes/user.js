@@ -1,5 +1,5 @@
 const { Router } = require("express");
-
+//  teste
 const routes = Router();
 
 const filters = require("../utils/filters.js");
@@ -34,7 +34,7 @@ routes.get(
     }
     return next();
   },
-  user.Logout,
+  user.Logout
 );
 
 // rota para saber se existe login
