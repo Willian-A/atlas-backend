@@ -1,5 +1,4 @@
 const { Router } = require("express");
-//  teste
 const routes = Router();
 
 const filters = require("../utils/filters.js");
