@@ -4,8 +4,8 @@ const mysql = require("mysql");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "6mRqU3Rnc0hwvqjhaT>Adjud;Y+T?]",
-  database: "bdatlas",
+  password: "root",
+  database: "atlas",
 });
 
 connection.connect((err) => {
