@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const createQuery = require("../utils/createQuery.js");
 
 //  registra novos usuarios
-function Register(data) {
+function Register(data, res) {
   //  retorna se algum usuario que já tenha o email ou cpf
   const userExist = createQuery.createQuery(
     "SELECT 1 FROM users WHERE email = ? or cpf = ?",
@@ -15,23 +15,25 @@ function Register(data) {
   return userExist
     .then((results) => {
       if (results.length > 0) {
-        return { error: "Email ou CPF Já Cadastrados", status: 422 };
+        console.log("A");
+        return res.status(422).send("Email ou CPF Já Cadastrados");
       }
       //  registra o usuario no BD
       createQuery.createQuery(
         "INSERT INTO users (name, email, password, cpf) VALUES (?, ?, ?, ?)",
         [data.name, data.email, bcrypt.hashSync(data.password, 10), data.cpf]
       );
-      return { error: false };
+      return res.sendStatus(200);
     })
     .catch(() => {
-      return { error: "Erro Interno", status: 500 };
+      console.log("A");
+      return res.status(500).send("Erro Interno");
     });
 }
 
 function Login(data, res) {
   const userExist = createQuery.createQuery(
-    "SELECT user_id,name, email, password FROM users WHERE email = ?",
+    "SELECT user_id, name, email, password FROM users WHERE email = ?",
     [data.email]
   );
 
@@ -55,12 +57,13 @@ function Login(data, res) {
             httpOnly: true,
           }
         );
-        return { error: false };
+        return res.sendStatus(200);
       }
-      return { error: "Email ou Senha Inválido", status: 401 };
+      return res.status(401).send("Email ou Senha Inválido");
     })
-    .catch(() => {
-      return { error: "Erro Interno", status: 500 };
+    .catch((err) => {
+      console.log(err);
+      return res.status(500).send("Erro Interno");
     });
 }
 

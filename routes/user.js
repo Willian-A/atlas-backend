@@ -2,7 +2,6 @@ const { Router } = require("express");
 const routes = Router();
 
 const filters = require("../utils/filters.js");
-const errorHandler = require("../utils/errorHandler.js");
 const user = require("../controllers/userController.js");
 
 // rota de cadastro de usuarios
@@ -10,7 +9,7 @@ routes.post("/cadastrar", async (req, res) => {
   if (filters.isEmpty(req, res) || filters.cpfFilter(req, res)) {
     return false;
   }
-  return errorHandler.errorHandler(await user.Register(req.body, res), res);
+  return await user.Register(req.body, res);
 });
 
 // rota de login de usuarios
@@ -21,7 +20,7 @@ routes.post("/login", async (req, res) => {
   if (filters.checkLogin(req, res)) {
     return res.status(409).send("Você Já Está Logado");
   }
-  return errorHandler.errorHandler(await user.Login(req.body, res), res);
+  return await user.Login(req.body, res);
 });
 
 // rota para logout de usuarios

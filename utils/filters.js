@@ -2,17 +2,12 @@ const jwt = require("jsonwebtoken");
 
 // filtro para campos vazios
 function isEmpty(req, res) {
-  function fieldHandler() {
-    for (const field in req.body) {
-      if (!req.body[field]) {
-        return false;
-      }
+  for (const field in req.body) {
+    let result = req && req.body && req.body[field];
+    if (!result) {
+      res.status(422).send("Preencha Todos os Campos");
+      return true;
     }
-    return true;
-  }
-  if (!fieldHandler()) {
-    res.status(422).send("Preencha Todos os Campos");
-    return true;
   }
 }
 
