@@ -30,14 +30,31 @@ async function addIntoCart(data, res, cookie) {
 
   // função principal
   function addCart() {
-    if (cookie.profile.cart.length === 0) {
-      pushIntoCart();
-    } else if (cookie.profile.cart.some(checkCart)) {
-      const position = findIndex();
-      cookie.profile.cart[position].quantity += 1;
-    } else {
-      pushIntoCart();
+    console.log(data);
+    if (data.action === "add") {
+      if (cookie.profile.cart.length === 0) {
+        pushIntoCart();
+      } else if (cookie.profile.cart.some(checkCart)) {
+        const position = findIndex();
+        cookie.profile.cart[position].quantity += 1;
+      } else {
+        pushIntoCart();
+      }
+    } else if (data.action === "remove") {
+      if (cookie.profile.cart.length === 0) {
+        return res
+          .status(400)
+          .send("Nenhum Produto no Carrinho Para Ser Removido");
+      } else if (cookie.profile.cart.some(checkCart)) {
+        const position = findIndex();
+        if (cookie.profile.cart[position].quantity <= 1) {
+          cookie.profile.cart.splice(position, 1);
+        } else {
+          cookie.profile.cart[position].quantity -= 1;
+        }
+      }
     }
+
     res.cookie("profile", cookie.profile, {
       maxAge: 900000,
       httpOnly: true,
