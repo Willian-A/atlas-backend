@@ -30,7 +30,6 @@ async function addIntoCart(data, res, cookie) {
 
   // função principal
   function addCart() {
-    console.log(data);
     if (data.action === "add") {
       if (cookie.profile.cart.length === 0) {
         pushIntoCart();
@@ -67,7 +66,6 @@ async function addIntoCart(data, res, cookie) {
 // retorna toda a lista do carrinho
 async function getCartList(cookie, res) {
   const identifiers = [];
-
   // coleta o ID de cada produto no carrinho
   function getProductIdentifier() {
     cookie.profile.cart.map((value) => {
@@ -105,16 +103,13 @@ async function getCartList(cookie, res) {
       )
       .then((results) => {
         const values = handleQuantity(results, identifiers);
-        return {
-          error: false,
-          info: {
-            newResult: values[0],
-            totalPrice: decimalFormat.format(values[1]),
-          },
-        };
+        return res.status(200).send({
+          newResult: values[0],
+          totalPrice: decimalFormat.format(values[1]),
+        });
       })
       .catch(() => {
-        return { error: "Erro Interno", status: 500 };
+        return res.status(500).send("Erro Interno");
       });
   }
 

@@ -11,10 +11,8 @@ routes.get("/cart", async (req, res) => {
   if (!filters.checkLogin(req, res)) {
     return res.status(409).send("Você Não Está Logado");
   }
-  return errorHandler.errorHandler(
-    await cart.getCartList(req.cookies, res),
-    res
-  );
+
+  await cart.getCartList(req.cookies, res);
 });
 
 //  rota para add produtos no carrinho
