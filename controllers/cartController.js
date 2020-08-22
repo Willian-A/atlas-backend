@@ -58,7 +58,7 @@ async function addIntoCart(data, res, cookie) {
       maxAge: 900000,
       httpOnly: true,
     });
-    return { error: false };
+    return res.sendStatus(200);
   }
   return addCart();
 }
