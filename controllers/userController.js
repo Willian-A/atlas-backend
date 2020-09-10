@@ -54,6 +54,8 @@ function Login(data, res) {
           },
           {
             maxAge: 3600000 * 1.5, // (60s * time) expires in 1.5h
+            sameSite: "None",
+            secure: true,
             httpOnly: true,
           }
         );
