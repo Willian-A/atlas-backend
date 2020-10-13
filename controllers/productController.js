@@ -23,4 +23,12 @@ async function getProduct(data, response) {
   return response.json({ result });
 }
 
-module.exports = { getAllProducts, getProduct };
+async function productsCategories(data, response) {
+  const result = await createQuery.createQuery(
+    "SELECT pr.name FROM products_categories pc JOIN categories c JOIN products pr WHERE pc.category_id = ? AND c.id_category = pc.category_id AND pr.id_product = pc.product_id  ",
+    [data.categoryID]
+  );
+  return response.json({ result });
+}
+
+module.exports = { getAllProducts, getProduct, productsCategories };

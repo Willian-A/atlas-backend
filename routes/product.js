@@ -13,4 +13,8 @@ routes.post("/product", (req, res) => {
   selectController.getProduct(req.body, res);
 });
 
+routes.post("/categories", (req, res) => {
+  selectController.productsCategories(req.body, res);
+});
+
 module.exports = routes;

@@ -39,11 +39,11 @@ routes.get(
 routes.get("/logged", (req, res) => {
   let result;
   if (filters.checkLogin(req)) {
-    result = true;
+    return res.status(200).send(true)
   } else {
-    result = false;
+    return res.status(409).send(false)
   }
-  return res.status(200).send(result);
+  
 });
 
 module.exports = routes;
