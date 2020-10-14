@@ -25,7 +25,7 @@ async function addIntoCart(data, res, cookie) {
 
   // verifica se o id do produto já está no carrinho
   function checkCart(array) {
-    return array.id === data.productID;
+    return array.id == data.productID;
   }
 
   // função principal
@@ -34,7 +34,7 @@ async function addIntoCart(data, res, cookie) {
       if (cookie.profile.cart.length === 0) {
         pushIntoCart();
       } else if (cookie.profile.cart.some(checkCart)) {
-        const position = findIndex();
+        const position = cookie.profile.cart.findIndex(checkCart);
         cookie.profile.cart[position].quantity += 1;
       } else {
         pushIntoCart();
@@ -45,7 +45,7 @@ async function addIntoCart(data, res, cookie) {
           .status(400)
           .send("Nenhum Produto no Carrinho Para Ser Removido");
       } else if (cookie.profile.cart.some(checkCart)) {
-        const position = findIndex();
+        const position = cookie.profile.cart.findIndex(checkCart);
         if (cookie.profile.cart[position].quantity <= 1) {
           cookie.profile.cart.splice(position, 1);
         } else {
