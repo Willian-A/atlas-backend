@@ -24,10 +24,26 @@ async function getProduct(data, response) {
 }
 
 async function productsCategories(data, response) {
-  const result = await createQuery.createQuery(
-    "SELECT pr.name FROM products_categories pc JOIN categories c JOIN products pr WHERE pc.category_id = ? AND c.id_category = pc.category_id AND pr.id_product = pc.product_id  ",
+  let array = [];
+
+  let idCategory = await createQuery.createQuery(
+    "SELECT id_category FROM categories WHERE name = ?  ",
     [data.categoryID]
   );
+
+  let productsID = await createQuery.createQuery(
+    "SELECT product_id FROM products_categories WHERE category_id = ?  ",
+    [idCategory[0].id_category]
+  );
+
+  JSON.parse(JSON.stringify(productsID)).map((value) => {
+    array.push(value.product_id);
+  });
+
+  let result = await createQuery.createQuery(
+    `SELECT id_product, name, FORMAT(price,2) as price, image FROM products WHERE id_product IN (${array})`
+  );
+
   return response.json({ result });
 }
 
