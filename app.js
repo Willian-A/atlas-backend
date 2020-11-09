@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
+const http = require("http");
 const https = require("https");
 const fs = require("fs");
 
@@ -22,9 +23,10 @@ app.use(
 );
 
 const options = {
-  key: fs.readFileSync("./cert/key.pem"),
-  cert: fs.readFileSync("./cert/cert.pem"),
+  key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
+  cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
 };
+const credentials = { key: options.key, cert: options.cert };
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -40,6 +42,6 @@ app.use(cartRoute);
 // Query Params: request.query (Filstros, ordenação, paginação, ...)
 // Route Params: request.params (identificar um recurso na alteração ou remoção)
 // Body: request.body
-
-https.createServer(options, app).listen(process.env.PORT || 3333);
+http.createServer(app).listen(8080);
+https.createServer(credentials, app).listen(process.env.PORT || 3333);
 console.log(`Listening: ${process.env.PORT}`);
