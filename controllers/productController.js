@@ -41,7 +41,7 @@ async function productsCategories(data, response) {
   });
 
   let result = await createQuery.createQuery(
-    `SELECT id_product, name, FORMAT(price,2) as price, image FROM products WHERE id_product IN (${array})`
+    `SELECT product_id, name, FORMAT(price,2) as price, image FROM products WHERE product_id IN (${array})`
   );
 
   return response.json({ result });
