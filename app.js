@@ -16,12 +16,7 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "https://192.168.0.107:3000",
-    credentials: true,
-  })
-);
+app.use(cors());
 
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
