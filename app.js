@@ -16,13 +16,6 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-  app.use(cors());
-  next();
-});
-
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
   cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
@@ -32,8 +25,9 @@ const credentials = { key: options.key, cert: options.cert };
 const routes = Router();
 
 routes.get("/a", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
   console.log(req);
-  return res.status(200).send("Você Não Está Logado");
+  res.send("Hello World");
 });
 
 // Metodos HTTP: GET, POST, PUT, DELETE
