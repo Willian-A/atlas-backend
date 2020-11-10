@@ -1,4 +1,4 @@
-const dotenv = require("dotenv");
+require("dotenv").config();
 
 const http = require("http");
 const https = require("https");
@@ -16,15 +16,14 @@ const cartRoute = require("./routes/cart.js");
 const app = express();
 
 app.use(cors());
-dotenv.config();
+
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
   cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
 };
 const credentials = { key: options.key, cert: options.cert };
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cookieParser());
 
 app.use(userRoute);
