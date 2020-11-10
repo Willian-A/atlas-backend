@@ -24,10 +24,6 @@ const options = {
 };
 const credentials = { key: options.key, cert: options.cert };
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-
 const routes = Router();
 
 routes.get("/a", async (req, res) => {
