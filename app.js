@@ -1,6 +1,5 @@
-const dotenv = require("dotenv");
-dotenv.config();
-const { Router } = require("express");
+require("dotenv").config();
+
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
@@ -15,17 +14,16 @@ const productRoute = require("./routes/product.js");
 const cartRoute = require("./routes/cart.js");
 
 const app = express();
+
 app.use(cors());
 
-app.get("/", function (req, res) {
-  res.json({ msg: "This is CORS-enabled for all origins!" });
-});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-// Metodos HTTP: GET, POST, PUT, DELETE
+app.use(userRoute);
+app.use(productRoute);
+app.use(cartRoute);
 
-// Tipos de parametos:
-// Query Params: request.query (Filstros, ordenação, paginação, ...)
-// Route Params: request.params (identificar um recurso na alteração ou remoção)
-// Body: request.body
 app.listen(process.env.PORT || 3333);
-console.log("alive", process.env.PORT);
+console.log(`Server at: ${process.env.PORT}`);
