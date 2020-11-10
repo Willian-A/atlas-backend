@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
   password: process.env.SQL_PASSWORD, // e.g. 'my-db-password'
   database: process.env.SQL_DATABASE, // e.g. 'my-database'
   // If connecting via unix domain socket, specify the path
-  host: `35.199.121.248`,
+  host: process.env.SQL_IP,
 });
 
 module.exports = connection;
