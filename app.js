@@ -16,8 +16,6 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use(express.static("public"));
-
 app.get("/hello", function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.send("Hello World");
@@ -34,6 +32,5 @@ const credentials = { key: options.key, cert: options.cert };
 // Query Params: request.query (Filstros, ordenação, paginação, ...)
 // Route Params: request.params (identificar um recurso na alteração ou remoção)
 // Body: request.body
-https.createServer(credentials, app).listen(3333, () => {
-  console.log("alive");
-});
+https.createServer(credentials, app).listen(3333);
+console.log("alive");
