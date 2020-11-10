@@ -18,7 +18,7 @@ const app = express();
 
 var allowedOrigins = [
   "https://localhost:3000",
-  "https://frontend-tcc-4xow8mw4r.vercel.app/",
+  "https://frontend-tcc-4xow8mw4r.vercel.app",
 ];
 app.use(
   cors({
