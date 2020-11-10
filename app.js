@@ -16,7 +16,11 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://localhost:3000/",
+  })
+);
 
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
@@ -27,6 +31,7 @@ const credentials = { key: options.key, cert: options.cert };
 const routes = Router();
 
 routes.get("/a", async (req, res) => {
+  console.log(req);
   return res.status(200).send("Você Não Está Logado");
 });
 
@@ -38,4 +43,4 @@ routes.get("/a", async (req, res) => {
 // Body: request.body
 http.createServer(app).listen(8080);
 https.createServer(credentials, app).listen(process.env.PORT || 3333);
-console.log(`Listening: ${process.env.PORT}`);
+console.log(`Listening to: ${process.env.PORT}`);
