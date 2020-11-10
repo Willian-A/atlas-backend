@@ -16,14 +16,8 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 app.use(cors());
-app.use((req, res, next) => {
-  res.append("Access-Control-Allow-Origin", "https://localhost:3000/");
-  res.append("Access-Control-Allow-Methods", "POST, GET");
-  res.append("Access-Control-Allow-Headers", "*");
-  next();
-});
 
-app.get("/hello", function (req, res) {
+app.get("/", function (req, res) {
   res.json({ msg: "This is CORS-enabled for all origins!" });
 });
 
@@ -39,4 +33,4 @@ const credentials = { key: options.key, cert: options.cert };
 // Route Params: request.params (identificar um recurso na alteração ou remoção)
 // Body: request.body
 https.createServer(credentials, app).listen(process.env.PORT || 3333);
-console.log("alive");
+console.log("alive", process.env.PORT);
