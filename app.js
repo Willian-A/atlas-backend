@@ -16,19 +16,7 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: ["http://localhost"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Access-Control-Allow-Methods",
-      "Access-Control-Request-Headers",
-    ],
-    credentials: true,
-    enablePreflight: true,
-  })
-);
+app.use(cors());
 
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
