@@ -34,6 +34,6 @@ const credentials = { key: options.key, cert: options.cert };
 // Query Params: request.query (Filstros, ordenação, paginação, ...)
 // Route Params: request.params (identificar um recurso na alteração ou remoção)
 // Body: request.body
-app.listen(3333, () => {
+https.createServer(credentials, app).listen(3333, () => {
   console.log("alive");
 });
