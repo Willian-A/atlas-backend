@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
-
+const { Router } = require("express");
 const http = require("http");
 const https = require("https");
 const fs = require("fs");
@@ -16,7 +16,12 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  app.use(cors());
+  next();
+});
 
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
@@ -28,9 +33,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use(userRoute);
-app.use(productRoute);
-app.use(cartRoute);
+const routes = Router();
+
+routes.get("/a", async (req, res) => {
+  return res.status(200).send("Você Não Está Logado");
+});
 
 // Metodos HTTP: GET, POST, PUT, DELETE
 
