@@ -17,7 +17,7 @@ const cartRoute = require("./routes/cart.js");
 const app = express();
 app.use(cors());
 app.use((req, res, next) => {
-  res.append("Access-Control-Allow-Origin", ["*"]);
+  res.append("Access-Control-Allow-Origin", "https://localhost:3000/");
   res.append("Access-Control-Allow-Methods", "POST, GET");
   res.append("Access-Control-Allow-Headers", "*");
   next();
