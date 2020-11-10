@@ -17,7 +17,7 @@ async function getAllProducts(res, limit) {
 //  retorna um produto baseado no ID passado
 async function getProduct(data, response) {
   const result = await createQuery.createQuery(
-    "SELECT product_id, name, FORMAT(price,2) as price, image, description FROM products where id_product = ?",
+    "SELECT product_id, name, FORMAT(price,2) as price, image, description FROM products where product_id = ?",
     [data.productID]
   );
   return response.json({ result });
