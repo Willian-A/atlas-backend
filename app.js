@@ -43,6 +43,8 @@ var corsOptions = {
   ],
 };
 
+app.use(cors(corsOptions)); //adding cors middleware to the express with above configurations
+
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
   cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
