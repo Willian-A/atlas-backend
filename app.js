@@ -25,7 +25,6 @@ const credentials = { key: options.key, cert: options.cert };
 const routes = Router();
 
 routes.get("/a", async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
   console.log(req);
   res.send("Hello World");
 });
