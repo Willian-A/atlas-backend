@@ -16,16 +16,33 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
-app.use(
-  cors({
-    credentials: true,
-  })
-);
-app.all("/*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
+var whitelist = [
+  "https://frontend-tcc.vercel.app/",
+  "http://localhost:3000",
+  "https://frontend-tcc.vercel.app",
+]; //white list consumers
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
+  methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true, //Credentials are cookies, authorization headers or TLS client certificates.
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "device-remember-token",
+    "Access-Control-Allow-Origin",
+    "Origin",
+    "Accept",
+  ],
+};
+
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
   cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
