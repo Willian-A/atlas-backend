@@ -20,7 +20,6 @@ async function getProduct(data, response) {
     "SELECT product_id, name, FORMAT(price,2) as price, image, description FROM products where product_id = ?",
     [data.productID]
   );
-  console.log({ result });
   return response.json({ result });
 }
 

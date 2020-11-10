@@ -10,7 +10,6 @@ routes.get("/product:limit", (req, res) => {
 
 // rota de acessoa a um unico produto
 routes.post("/product", (req, res) => {
-  console.log(req.body);
   selectController.getProduct(req.body, res);
 });
 
