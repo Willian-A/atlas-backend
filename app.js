@@ -16,20 +16,27 @@ const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
+var allowedOrigins = [
+  "https://localhost:3000",
+  "https://frontend-tcc-4xow8mw4r.vercel.app/",
+];
 app.use(
   cors({
-    origin: "*",
+    origin: function (origin, callback) {
+      // allow requests with no origin
+      // (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg =
+          "The CORS policy for this site does not " +
+          "allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
-app.use((req, res, next) => {
-  //Qual site tem permissão de realizar a conexão, no exemplo abaixo está o "*" indicando que qualquer site pode fazer a conexão
-  res.header("Access-Control-Allow-Origin", "*");
-  //Quais são os métodos que a conexão pode realizar na API
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  app.use(cors());
-  next();
-});
 const options = {
   key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
   cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
