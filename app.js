@@ -21,16 +21,11 @@ app.get("/", function (req, res) {
   res.json({ msg: "This is CORS-enabled for all origins!" });
 });
 
-const options = {
-  key: fs.readFileSync("./cert/selfsigned.key", "utf8"),
-  cert: fs.readFileSync("./cert/selfsigned.crt", "utf8"),
-};
-const credentials = { key: options.key, cert: options.cert };
 // Metodos HTTP: GET, POST, PUT, DELETE
 
 // Tipos de parametos:
 // Query Params: request.query (Filstros, ordenação, paginação, ...)
 // Route Params: request.params (identificar um recurso na alteração ou remoção)
 // Body: request.body
-https.createServer(credentials, app).listen(process.env.PORT || 3333);
+app.listen(process.env.PORT || 3333);
 console.log("alive", process.env.PORT);
