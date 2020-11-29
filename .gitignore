@@ -1,6 +1,7 @@
 .gitignore
 /node_modules
-*.rar
 node_modules/
+/backup
+*.rar
 .env
 .eslintrc.json

@@ -1,6 +1,5 @@
 require("dotenv").config();
 
-const http = require("http");
 const https = require("https");
 const fs = require("fs");
 
@@ -10,22 +9,25 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 const userRoute = require("./routes/user.js");
-const productRoute = require("./routes/product.js");
-const cartRoute = require("./routes/cart.js");
 
 const app = express();
 
 app.use(cors());
-
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser());
-app.get("/", async (req, res) => {
-  res.sendStatus("Servidor Backend");
-});
-app.use(userRoute);
-app.use(productRoute);
-app.use(cartRoute);
 
-app.listen(process.env.PORT || 3333);
+app.get("/", async (req, res) => {
+  res.send("Servidor Backend");
+});
+
+app.use(userRoute);
+
+// SSL
+const privateKey = fs.readFileSync("cert/selfsigned.key", "utf8");
+const certificate = fs.readFileSync("cert/selfsigned.crt", "utf8");
+
+const credentials = { key: privateKey, cert: certificate };
+
+https.createServer(credentials, app).listen(process.env.PORT || 3333);
 console.log(`Server at: ${process.env.PORT}`);
