@@ -38,7 +38,7 @@ module.exports = class UserService {
       result.length != 0 &&
       bcrypt.compareSync(this.password, result[0].password)
     ) {
-      let token = bcrypt.hashSync("kkk");
+      let token = bcrypt.hashSync(process.env.SECRET);
       let cookie = {
         name: "profile",
         payload: token,
