@@ -20,7 +20,6 @@ const origin =
 
 app.use(
   cors({
-    credentials: true,
     origin,
   })
 );
