@@ -21,7 +21,7 @@ routes.get("/logout", async (req, res) => {
 });
 
 routes.get("/logged", (req, res) => {
-  res.status(200).send("Ok Logado");
+  new ErrorHandler(res, { error: true, HTTPcode: 403 }).checkHttpCode();
 });
 
 module.exports = routes;
