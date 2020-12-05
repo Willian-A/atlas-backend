@@ -20,8 +20,10 @@ routes.get("/logout", async (req, res) => {
     .then((status) => new ErrorHandler(res, status).checkHttpCode());
 });
 
-routes.get("/logged", (req, res) => {
-  new ErrorHandler(res, { error: true, HTTPcode: 403 }).checkHttpCode();
+routes.get("/logged", async (req, res) => {
+  await new UserService()
+    .logged(req.cookies.profile)
+    .then((status) => new ErrorHandler(res, status).checkHttpCode());
 });
 
 module.exports = routes;
