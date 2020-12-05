@@ -20,7 +20,7 @@ routes.get("/logout", async (req, res) => {
     .then((status) => new ErrorHandler(res, status).checkHttpCode());
 });
 
-routes.get("/logado", (req, res) => {
+routes.get("/logged", (req, res) => {
   res.status(200).send("Ok Logado");
 });
 
