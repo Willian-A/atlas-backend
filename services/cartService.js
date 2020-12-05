@@ -1,12 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const {
-  selectProduct,
-  selectLimitedProducts,
-  selectAllProducts,
-} = require("../database/productSQL");
-
 module.exports = class CartService {
   async getCart(profile) {
     const productsIDs = [];
@@ -47,7 +41,6 @@ module.exports = class CartService {
   }
 
   async removeCartProduct(id, profile) {
-    let result = await selectAllProducts(id);
     return { error: false, payload: result };
   }
 };
