@@ -1,8 +1,5 @@
 require("dotenv").config();
 
-const https = require("https");
-const fs = require("fs");
-
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -15,14 +12,14 @@ const cartRoute = require("./routes/cart.js");
 const app = express();
 
 app.use(cors());
-app.use(cookieParser());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.get("/", async (req, res) => {
-  res.send("Servidor Backend");
+  res.sendStatus("Servidor Backend");
 });
-
 app.use(userRoute);
 app.use(productRoute);
 app.use(cartRoute);
