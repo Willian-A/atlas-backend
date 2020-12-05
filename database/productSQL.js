@@ -16,6 +16,7 @@ async function selectLimitedProducts(qty) {
   return new Promise((result, err) => {
     conn.query(SQL, (queryErr, queryResult) => {
       if (queryErr) return err(new Error(queryErr));
+      console.log(queryResult);
       return result(JSON.parse(JSON.stringify(queryResult)));
     });
   });

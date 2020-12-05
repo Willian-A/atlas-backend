@@ -9,7 +9,9 @@ routes.post("/product", async (req, res) => {
 });
 
 routes.get("/products:qty", async (req, res) => {
-  res.send("broken");
+  await new ProductService()
+    .getLimitedProcuts(req.params.qty)
+    .then((status) => new ErrorHandler(res, status).checkHttpCode());
 });
 
 routes.get("/products", async (req, res) => {
