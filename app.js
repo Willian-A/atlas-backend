@@ -16,7 +16,7 @@ const app = express();
 const origin =
   process.env.NODE_ENV === "development"
     ? "https://localhost:3000"
-    : "https://example.com";
+    : "https://frontend-tcc.vercel.app/";
 
 app.use(
   cors({
