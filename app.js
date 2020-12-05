@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.get("/", async (req, res) => {
-  res.sendStatus("Servidor Backend");
+  res.send("Servidor Backend");
 });
 app.use(userRoute);
 app.use(productRoute);
