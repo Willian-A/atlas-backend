@@ -14,6 +14,7 @@ module.exports = class ProductService {
   }
 
   async getLimitedProcuts(qty) {
+    console.log(process.env.SQL_IP);
     let result = await selectLimitedProducts(qty);
     if (result.length <= 0) {
       return { error: true, HTTPcode: 500 };
