@@ -12,6 +12,7 @@ async function selectProduct(values) {
 }
 
 async function selectLimitedProducts(qty) {
+  console.log(qty);
   const SQL = `SELECT *, FORMAT(price,2) as price FROM products LIMIT ${qty}`;
   console.log(SQL);
   conn.query(SQL, (queryErr, queryResult) => {
