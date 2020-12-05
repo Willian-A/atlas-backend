@@ -13,7 +13,7 @@ module.exports = class CartService {
     profile.cart.map((value) => {
       productsIDs.push(value.id);
     });
-    return { error: false, payload: payload };
+    return { error: false };
   }
 
   async addCartProduct(id, profile) {
