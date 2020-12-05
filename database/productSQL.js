@@ -12,9 +12,7 @@ async function selectProduct(values) {
 }
 
 async function selectLimitedProducts(qty) {
-  const SQL = qty
-    ? `SELECT *, FORMAT(price,2) as price FROM products LIMIT ${qty}`
-    : "SELECT *, FORMAT(price,2) as price FROM products";
+  const SQL = `SELECT *, FORMAT(price,2) as price FROM products LIMIT ${qty}`;
   return new Promise((result, err) => {
     conn.query(SQL, (queryErr, queryResult) => {
       if (queryErr) return err(new Error(queryErr));
