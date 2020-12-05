@@ -20,6 +20,9 @@ app.use(cookieParser());
 app.get("/", async (req, res) => {
   res.send("Servidor Backend");
 });
+app.get("/productss", async (req, res) => {
+  res.send("teste");
+});
 app.use(userRoute);
 app.use(productRoute);
 app.use(cartRoute);
