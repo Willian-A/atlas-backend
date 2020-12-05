@@ -1,5 +1,9 @@
 require("dotenv").config();
 
+const http = require("http");
+const https = require("https");
+const fs = require("fs");
+
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -16,7 +20,6 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-
 app.get("/", async (req, res) => {
   res.sendStatus("Servidor Backend");
 });
@@ -25,5 +28,4 @@ app.use(productRoute);
 app.use(cartRoute);
 
 app.listen(process.env.PORT || 3333);
-
 console.log(`Server at: ${process.env.PORT}`);

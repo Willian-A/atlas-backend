@@ -1,27 +1,49 @@
-const routes = require("express").Router();
-const UserService = require("../services/userService");
-const ErrorHandler = require("../error");
+const { Router } = require("express");
+const routes = Router();
 
+const filters = require("../utils/filters.js");
+const user = require("../controllers/userController.js");
+
+// rota de cadastro de usuarios
 routes.post("/cadastrar", async (req, res) => {
-  await new UserService()
-    .register(req.body.nome, req.body.email, req.body.password, req.body.cpf)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+  if (filters.isEmpty(req, res) || filters.cpfFilter(req, res)) {
+    return false;
+  }
+  return await user.Register(req.body, res);
 });
 
+// rota de login de usuarios
 routes.post("/login", async (req, res) => {
-  await new UserService()
-    .login(req.body.email, req.body.password)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+  if (filters.isEmpty(req, res)) {
+    return false;
+  }
+  if (filters.checkLogin(req, res)) {
+    return res.status(409).send("Você Já Está Logado");
+  }
+  return await user.Login(req.body, res);
 });
 
-routes.get("/logout", async (req, res) => {
-  await new UserService()
-    .logout(req.cookies.profile)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
-});
+// rota para logout de usuarios
+routes.get(
+  "/logout",
+  (req, res, next) => {
+    if (!filters.checkLogin(req, res)) {
+      return res.status(409).send("Você Não Está Logado");
+    }
+    return next();
+  },
+  user.Logout
+);
 
-routes.get("/logado", (req, res) => {
-  res.status(200).send("Ok Logado");
+// rota para saber se existe login
+routes.get("/logged", (req, res) => {
+  let result;
+  if (filters.checkLogin(req)) {
+    return res.status(200).send(true)
+  } else {
+    return res.status(409).send(false)
+  }
+  
 });
 
 module.exports = routes;

@@ -1,22 +1,26 @@
-const routes = require("express").Router();
-const CartService = require("../services/cartService");
-const ErrorHandler = require("../error");
+const { Router } = require("express");
 
+const routes = Router();
+
+const filters = require("../utils/filters.js");
+const errorHandler = require("../utils/errorHandler.js");
+const cart = require("../controllers/cartController.js");
+
+//  rota de acesso aos produtos no carrinho
 routes.get("/cart", async (req, res) => {
-  await new CartService()
-    .getCart(req.cookies.profile)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+  if (!filters.checkLogin(req, res)) {
+    return res.status(409).send("Você Não Está Logado");
+  }
+
+  return await cart.getCartList(req.cookies, res);
 });
 
-routes.post("/cart/add", async (req, res) => {
-  await new CartService()
-    .addCartProduct(req.body.id, req.cookies.profile)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+//  rota para add produtos no carrinho
+routes.post("/cart", async (req, res) => {
+  if (!filters.checkLogin(req, res)) {
+    return res.status(409).send("Você Não Está Logado");
+  }
+  return await cart.addIntoCart(req.body, res, req.cookies);
 });
 
-routes.post("/cart/remove", async (req, res) => {
-  await new CartService()
-    .removeCartProduct(req.body.id, req.cookies.profile)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
-});
 module.exports = routes;

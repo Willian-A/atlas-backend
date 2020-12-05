@@ -1,23 +1,20 @@
-const routes = require("express").Router();
-const ProductService = require("../services/productService");
-const ErrorHandler = require("../error");
+const { Router } = require("express");
+const selectController = require("../controllers/productController.js");
 
-routes.post("/product", async (req, res) => {
-  await new ProductService()
-    .getProduct(req.body.id)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+const routes = Router();
+
+// rota de acesso a todos os produtos
+routes.get("/product:limit", (req, res) => {
+  selectController.getAllProducts(res, req.params.limit);
 });
 
-routes.get("/products:qty", async (req, res) => {
-  await new ProductService()
-    .getLimitedProcuts(req.params.qty)
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+// rota de acessoa a um unico produto
+routes.post("/product", (req, res) => {
+  selectController.getProduct(req.body, res);
 });
 
-routes.get("/products", async (req, res) => {
-  await new ProductService()
-    .getAllProducts()
-    .then((status) => new ErrorHandler(res, status).checkHttpCode());
+routes.post("/categories", (req, res) => {
+  selectController.productsCategories(req.body, res);
 });
 
 module.exports = routes;
