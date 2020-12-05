@@ -13,8 +13,17 @@ const productRoute = require("./routes/product.js");
 const cartRoute = require("./routes/cart.js");
 
 const app = express();
+const origin =
+  process.env.NODE_ENV === "development"
+    ? "https://localhost:3000"
+    : "https://example.com";
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin,
+  })
+);
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -33,5 +42,10 @@ const certificate = fs.readFileSync("cert/selfsigned.crt", "utf8");
 
 const credentials = { key: privateKey, cert: certificate };
 
-https.createServer(credentials, app).listen(process.env.PORT || 3333);
+if (process.env.NODE_ENV === "development") {
+  https.createServer(credentials, app).listen(process.env.PORT || 3333);
+} else {
+  app.listen(process.env.PORT || 3333);
+}
+
 console.log(`Server at: ${process.env.PORT}`);
