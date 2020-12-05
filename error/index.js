@@ -8,6 +8,7 @@ module.exports = class ErrorHandler {
     const httpStatusCodes = {
       200: "OK",
       400: "Email ou Senha errados",
+      403: "Usuario não Logado",
       404: "Não Encontrado",
       409: "Email ou CPF já cadastrados",
       500: "Erro Interno do Servidor",
@@ -18,11 +19,19 @@ module.exports = class ErrorHandler {
         .status(this.status.HTTPcode)
         .send(httpStatusCodes[this.status.HTTPcode]);
     } else if (this.status.cookie) {
-      this.res.cookie(
-        this.status.cookie.name,
-        this.status.cookie.payload,
-        this.status.cookie.configs
-      );
+      if (this.status.cookie.action === "create") {
+        this.res.cookie(
+          this.status.cookie.name,
+          this.status.cookie.payload,
+          this.status.cookie.configs
+        );
+      } else if (this.status.cookie.action === "update") {
+        this.res.cookie(this.status.cookie.name, this.status.cookie.payload);
+      } else {
+        this.res.clearCookie(this.status.cookie.name);
+      }
+    } else if (this.status.payload) {
+      return this.res.send(this.status.payload);
     }
     return this.res.sendStatus(200);
   }

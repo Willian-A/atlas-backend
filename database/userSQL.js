@@ -17,7 +17,7 @@ async function selectUserExists(values) {
 }
 
 async function selectUser(values) {
-  const SQL = "SELECT password FROM users WHERE email = ?";
+  const SQL = "SELECT user_id, password FROM users WHERE email = ?";
   return new Promise((result, err) => {
     conn.query(SQL, values, (queryErr, queryResult) => {
       if (queryErr) return err(new Error(queryErr));
@@ -26,4 +26,14 @@ async function selectUser(values) {
   });
 }
 
-module.exports = { insertUser, selectUserExists, selectUser };
+async function insertUserSession(values) {
+  const SQL = "INSERT INTO sessions(session_id, user_id) VALUES (?, ?)";
+  return conn.query(SQL, values);
+}
+
+module.exports = {
+  insertUser,
+  selectUserExists,
+  selectUser,
+  insertUserSession,
+};

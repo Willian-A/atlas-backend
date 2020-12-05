@@ -9,10 +9,21 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 const userRoute = require("./routes/user.js");
+const productRoute = require("./routes/product.js");
+const cartRoute = require("./routes/cart.js");
 
 const app = express();
+const origin =
+  process.env.NODE_ENV === "development"
+    ? "https://localhost:3000"
+    : "https://example.com";
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin,
+  })
+);
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -22,6 +33,8 @@ app.get("/", async (req, res) => {
 });
 
 app.use(userRoute);
+app.use(productRoute);
+app.use(cartRoute);
 
 // SSL
 const privateKey = fs.readFileSync("cert/selfsigned.key", "utf8");
