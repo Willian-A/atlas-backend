@@ -38,10 +38,11 @@ module.exports = class UserService {
         name: "profile",
         payload: { token, cart: [] },
         configs: {
+          sameSite: "None",
+          secure: true,
           maxAge: 3600000 * 2.5, // (seconds * time) expires in 2.5h
         },
       };
-      console.log(cookie);
       return { error: false, cookie: cookie };
     } else {
       return { error: true, HTTPcode: 400 };
