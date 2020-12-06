@@ -13,11 +13,14 @@ const productRoute = require("./routes/product.js");
 const cartRoute = require("./routes/cart.js");
 
 const app = express();
+let origin = process.env.NODE_ENV
+  ? "https://localhost:3000"
+  : "https://frontend-tcc.vercel.app/";
 
 app.use(
   cors({
     credentials: true,
-    origin: "https://localhost:3000",
+    origin: origin,
   })
 );
 app.use(cookieParser());
