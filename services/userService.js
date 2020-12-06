@@ -51,9 +51,13 @@ module.exports = class UserService {
 
   async logout(profile) {
     if (profile) {
-      let isValid = jwt.verify(profile, process.env.SECRET, (err, decoded) => {
-        return bcrypt.compareSync("true", decoded.token);
-      });
+      let isValid = jwt.verify(
+        profile.token,
+        process.env.SECRET,
+        (err, decoded) => {
+          return bcrypt.compareSync("true", decoded.token);
+        }
+      );
 
       if (isValid) {
         return {

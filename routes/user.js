@@ -21,7 +21,6 @@ routes.get("/logout", async (req, res) => {
 });
 
 routes.get("/logged", async (req, res) => {
-  console.log(req.cookies);
   await new UserService()
     .logged(req.cookies.profile)
     .then((status) => new ErrorHandler(res, status).checkHttpCode());
