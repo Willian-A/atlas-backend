@@ -14,7 +14,6 @@ module.exports = class ProductService {
   }
 
   async getLimitedProcuts(qty) {
-    console.log(process.env.SQL_IP);
     let result = await selectLimitedProducts(qty);
 
     return { error: false, payload: result };
