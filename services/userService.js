@@ -65,11 +65,6 @@ module.exports = class UserService {
           cookie: {
             action: "delete",
             name: "profile",
-            configs: {
-              sameSite: "None",
-              secure: true,
-              maxAge: 60000, //expires in 1min
-            },
           },
         };
       } else {
