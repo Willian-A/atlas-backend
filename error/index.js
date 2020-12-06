@@ -27,7 +27,8 @@ module.exports = class ErrorHandler {
         );
       } else if (this.status.cookie.action === "update") {
         this.res.cookie(this.status.cookie.name, this.status.cookie.payload);
-      } else {
+      } else if (this.status.cookie.action === "delete") {
+        console.log(this.status);
         this.res.clearCookie("profile");
       }
     } else if (this.status.payload) {
