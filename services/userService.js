@@ -75,8 +75,13 @@ module.exports = class UserService {
       let isValid = jwt.verify(profile, process.env.SECRET, (err, decoded) => {
         return bcrypt.compareSync("true", decoded.token);
       });
-      console.log(isValid);
-      return { error: false };
+      if (isValid) {
+        return {
+          error: false,
+        };
+      } else {
+        return { error: true, HTTPcode: 403 };
+      }
     } else {
       return { error: true, HTTPcode: 403 };
     }
