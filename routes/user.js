@@ -4,7 +4,7 @@ const ErrorHandler = require("../error");
 
 routes.post("/cadastrar", async (req, res) => {
   await new UserService()
-    .register(req.body.nome, req.body.email, req.body.password, req.body.cpf)
+    .register(req.body.name, req.body.email, req.body.password, req.body.cpf)
     .then((status) => new ErrorHandler(res, status).checkHttpCode());
 });
 
