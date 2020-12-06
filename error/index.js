@@ -26,7 +26,7 @@ module.exports = class ErrorHandler {
           this.status.cookie.configs
         );
       } else if (this.status.cookie.action === "update") {
-        this.res.cookie(this.status.cookie.name, this.status.cookie.payload);
+        this.res.cookie("profile", "");
       } else {
         this.res.clearCookie(this.status.cookie.name);
       }
