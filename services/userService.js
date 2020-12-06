@@ -50,25 +50,8 @@ module.exports = class UserService {
   }
 
   async logout(profile) {
-    if (profile) {
-      let isValid = jwt.verify(profile, process.env.SECRET, (err, decoded) => {
-        return bcrypt.compareSync("true", decoded.token);
-      });
-
-      if (isValid) {
-        return {
-          error: false,
-          cookie: {
-            action: "delete",
-            name: "profile",
-          },
-        };
-      } else {
-        return { error: true, HTTPcode: 403 };
-      }
-    } else {
-      return { error: true, HTTPcode: 403 };
-    }
+    console.log(profile);
+    return { error: false };
   }
 
   async logged(profile) {
