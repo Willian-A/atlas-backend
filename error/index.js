@@ -29,7 +29,7 @@ module.exports = class ErrorHandler {
         this.res.cookie(this.status.cookie.name, this.status.cookie.payload);
       } else if (this.status.cookie.action === "delete") {
         console.log(this.status);
-        this.res.clearCookie("profile");
+        this.res.clearCookie("profile", this.status.cookie.payload);
       }
     } else if (this.status.payload) {
       return this.res.send(this.status.payload);
