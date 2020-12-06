@@ -33,7 +33,6 @@ module.exports = class UserService {
       let token = jwt.sign({ token: hashToken }, process.env.SECRET, {
         expiresIn: 9000, // expires in 2.5h
       });
-      await insertUserSession([hashToken, result[0].user_id]);
       let cookie = {
         action: "create",
         name: "profile",
