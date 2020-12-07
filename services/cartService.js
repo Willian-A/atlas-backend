@@ -10,27 +10,37 @@ module.exports = class CartService {
     return { error: false };
   }
 
-  async addCartProduct(id, profile) {
-    if (profile) {
-      let decoded = jwt.verify(profile.token, process.env.SECRET);
-      let isValid = bcrypt.compareSync("true", decoded.token);
-      if (isValid) {
-        let cartIndex = profile.cart.findIndex((value, i) => {
-          return value.id === id;
-        });
-        if (cartIndex >= 0) {
-          profile.cart[cartIndex].qty += 1;
+  async addCartProduct(id, cookieProfile) {
+    function isCookieValid(cookie) {
+      return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
+        return bcrypt.compareSync("true", decoded.token);
+      });
+    }
+
+    function isProductInCart(cookie, id) {
+      return cookie.cart.findIndex((value, i) => {
+        return value.id === id;
+      });
+    }
+
+    function generateCookie() {
+      return {
+        action: "update",
+        name: "profile",
+        payload: {
+          token: cookieProfile.token,
+          cart: cookieProfile.cart,
+        },
+      };
+    }
+
+    if (cookieProfile) {
+      if (isCookieValid(cookieProfile)) {
+        if (isProductInCart(cookieProfile, id) >= 0) {
+          cookieProfile.cart[cartIndex].qty += 1;
         } else {
-          profile.cart.push({ id, qty: 1 });
+          cookieProfile.cart.push({ id, qty: 1 });
         }
-        let cookie = {
-          action: "update",
-          name: "profile",
-          payload: {
-            token: profile.token,
-            cart: profile.cart,
-          },
-        };
         return { error: false, cookie: cookie };
       } else {
         return { error: true, HTTPcode: 403 };

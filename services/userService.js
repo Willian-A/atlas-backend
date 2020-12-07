@@ -38,7 +38,7 @@ module.exports = class UserService {
       return token;
     }
 
-    function generateLoginCookie() {
+    function generateCookie() {
       return {
         action: "create",
         name: "profile",
@@ -53,7 +53,7 @@ module.exports = class UserService {
 
     return await selectUser([email]).then((result) => {
       if (userExists(result)) {
-        return { error: false, cookie: generateLoginCookie() };
+        return { error: false, cookie: generateCookie() };
       } else {
         return { error: true, HTTPcode: 400 };
       }
@@ -78,7 +78,7 @@ module.exports = class UserService {
               path: "/",
               sameSite: "None",
               secure: true,
-              maxAge: 60000,
+              maxAge: 60000, // expires in 1min,
             },
           },
         };
