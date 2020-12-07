@@ -28,13 +28,10 @@ module.exports = class ErrorHandler {
       } else if (this.status.cookie.action === "update") {
         this.res.cookie(this.status.cookie.name, this.status.cookie.payload);
       } else if (this.status.cookie.action === "delete") {
-        console.log(this.status);
-        this.res.clearCookie("profile", {
-          path: "/",
-          sameSite: "None",
-          secure: true,
-          maxAge: 60000,
-        });
+        this.res.clearCookie(
+          this.status.cookie.name,
+          this.status.cookie.configs
+        );
       }
     } else if (this.status.payload) {
       return this.res.send(this.status.payload);
