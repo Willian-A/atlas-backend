@@ -8,6 +8,13 @@ const {
 } = require("../database/userSQL");
 
 module.exports = class UserService {
+  isCookieValid(cookie) {
+    return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
+      if (err) return false;
+      return bcrypt.compareSync("true", decoded.token);
+    });
+  }
+
   async register(name, email, password, cpf) {
     function userDoesntExists(result) {
       return result.length === 0;
@@ -61,14 +68,8 @@ module.exports = class UserService {
   }
 
   async logout(cookieProfile) {
-    function isCookieValid(cookie) {
-      return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
-        return bcrypt.compareSync("true", decoded.token);
-      });
-    }
-
     if (cookieProfile) {
-      if (isCookieValid(cookieProfile)) {
+      if (this.isCookieValid(cookieProfile)) {
         return {
           error: false,
           cookie: {
@@ -90,11 +91,15 @@ module.exports = class UserService {
     }
   }
 
-  async logged(profile) {
-    if (profile) {
-      return {
-        error: false,
-      };
+  async logged(cookieProfile) {
+    if (cookieProfile.token) {
+      if (this.isCookieValid(cookieProfile)) {
+        return {
+          error: false,
+        };
+      } else {
+        return { error: true, HTTPcode: 403 };
+      }
     } else {
       return { error: true, HTTPcode: 403 };
     }
