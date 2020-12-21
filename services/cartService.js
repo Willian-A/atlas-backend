@@ -27,11 +27,18 @@ module.exports = class CartService {
       return { dbResult, cartTotal };
     }
 
-    return await selectProducts(getProductsIDs(cookieProfile)).then(
-      (result) => {
-        return { error: false, payload: handleQuantity(result, cookieProfile) };
-      }
-    );
+    if (cookieProfile) {
+      return await selectProducts(getProductsIDs(cookieProfile)).then(
+        (result) => {
+          return {
+            error: false,
+            payload: handleQuantity(result, cookieProfile),
+          };
+        }
+      );
+    } else {
+      return { error: true, HTTPcode: 403 };
+    }
   }
 
   async addCartProduct(id, cookieProfile) {
@@ -63,7 +70,7 @@ module.exports = class CartService {
       };
     }
 
-    if (cookieProfile.token) {
+    if (cookieProfile && cookieProfile.token) {
       if (isCookieValid(cookieProfile)) {
         let cartIndex = isProductInCart(cookieProfile, id);
         if (cartIndex >= 0) {

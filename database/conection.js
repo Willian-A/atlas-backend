@@ -1,11 +1,16 @@
-const mysql = require("mysql");
+const MongoClient = require("mongodb").MongoClient;
+const uri = process.env.DB_URI;
+var db;
 
-var connection = mysql.createConnection({
-  user: process.env.SQL_USER, // e.g. 'my-db-user'
-  password: process.env.SQL_PASSWORD, // e.g. 'my-db-password'
-  database: process.env.SQL_DATABASE, // e.g. 'my-database'
-  // If connecting via unix domain socket, specify the path
-  host: process.env.SQL_IP,
-});
+module.exports = {
+  connectToServer: function (callback) {
+    MongoClient.connect(uri, { useNewUrlParser: true }, function (err, client) {
+      db = client.db("atlas");
+      return callback(err);
+    });
+  },
 
-module.exports = connection;
+  getDb: function () {
+    return db;
+  },
+};

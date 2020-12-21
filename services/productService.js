@@ -3,10 +3,11 @@ const {
   selectLimitedProducts,
   selectAllProducts,
 } = require("../database/productSQL");
+const ProductModel = require("../database/models/product");
 
 module.exports = class ProductService {
   async getProduct(id) {
-    return await selectProduct(id).then((result) => {
+    return await new ProductModel().selectProduct(id).then((result) => {
       if (result.length <= 0) {
         return { error: true, HTTPcode: 500 };
       } else {
@@ -16,17 +17,19 @@ module.exports = class ProductService {
   }
 
   async getLimitedProcuts(qty) {
-    return await selectLimitedProducts(qty).then((result) => {
-      if (result.length <= 0) {
-        return { error: true, HTTPcode: 500 };
-      } else {
-        return { error: false, payload: result };
-      }
-    });
+    return await new ProductModel()
+      .selectLimitedProducts(qty)
+      .then((result) => {
+        if (result.length <= 0) {
+          return { error: true, HTTPcode: 500 };
+        } else {
+          return { error: false, payload: result };
+        }
+      });
   }
 
   async getAllProducts() {
-    return await selectAllProducts().then((result) => {
+    return await new ProductModel().selectProducts().then((result) => {
       if (result.length <= 0) {
         return { error: true, HTTPcode: 500 };
       } else {
