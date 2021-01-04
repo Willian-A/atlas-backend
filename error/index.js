@@ -1,4 +1,4 @@
-module.exports = class ErrorHandler {
+module.exports = class ErrorFactory {
   constructor(response, status) {
     this.res = response;
     this.status = status;
@@ -36,9 +36,8 @@ module.exports = class ErrorHandler {
         }
       } else if (this.status.payload) {
         return this.res.send(this.status.payload);
-      } else {
-        return this.res.sendStatus(200);
       }
+      return this.res.sendStatus(200);
     } catch (err) {
       return this.res.sendStatus(500);
     }

@@ -1,11 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const {
-  insertUser,
-  selectUserExists,
-  selectUser,
-} = require("../database/userSQL");
+const UserModel = require("../database/models/user");
 
 module.exports = class UserService {
   isCookieValid(cookie) {
@@ -20,16 +16,21 @@ module.exports = class UserService {
       return result.length === 0;
     }
 
-    return await selectUserExists([email, cpf]).then((result) => {
+    return new UserModel().selectUser(email).then((result) => {
       if (userDoesntExists(result)) {
-        insertUser([name, email, bcrypt.hashSync(password), cpf]);
+        new UserModel().insertUser({
+          name,
+          email,
+          password: bcrypt.hashSync(password),
+          cpf,
+        });
         return { error: false };
       } else {
         return { error: true, HTTPcode: 409 };
       }
     });
   }
-
+  //a
   async login(email, password) {
     function userExists(result) {
       return (
@@ -58,7 +59,7 @@ module.exports = class UserService {
       };
     }
 
-    return await selectUser([email]).then((result) => {
+    return new UserModel().selectUser(email).then((result) => {
       if (userExists(result)) {
         return { error: false, cookie: generateCookie() };
       } else {
@@ -92,7 +93,7 @@ module.exports = class UserService {
   }
 
   async logged(cookieProfile) {
-    if (cookieProfile.token) {
+    if (cookieProfile) {
       if (this.isCookieValid(cookieProfile)) {
         return {
           error: false,

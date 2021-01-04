@@ -11,6 +11,18 @@ module.exports = class ProductModel {
     }
   }
 
+  async selectProductsByID(array) {
+    try {
+      var db = mongoUtil.getDb();
+      return await db
+        .collection("products")
+        .find({ _id: { $in: array } })
+        .toArray();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async selectLimitedProducts(qty) {
     try {
       var db = mongoUtil.getDb();
@@ -19,6 +31,7 @@ module.exports = class ProductModel {
       console.error(err);
     }
   }
+
   async selectProducts() {
     try {
       var db = mongoUtil.getDb();

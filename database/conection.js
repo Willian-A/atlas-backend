@@ -1,5 +1,8 @@
 const MongoClient = require("mongodb").MongoClient;
-const uri = process.env.DB_URI;
+const uri =
+  process.env.DB_URI ||
+  "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+
 var db;
 
 module.exports = {

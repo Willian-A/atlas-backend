@@ -1,8 +1,3 @@
-const {
-  selectProduct,
-  selectLimitedProducts,
-  selectAllProducts,
-} = require("../database/productSQL");
 const ProductModel = require("../database/models/product");
 
 module.exports = class ProductService {
