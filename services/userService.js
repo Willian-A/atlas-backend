@@ -97,12 +97,13 @@ module.exports = class UserService {
       if (this.isCookieValid(cookieProfile)) {
         return {
           error: false,
+          payload: true,
         };
       } else {
-        return { error: true, HTTPcode: 403 };
+        return { error: true, HTTPcode: 403, payload: false };
       }
     } else {
-      return { error: true, HTTPcode: 403 };
+      return { error: true, HTTPcode: 403, payload: false };
     }
   }
 };

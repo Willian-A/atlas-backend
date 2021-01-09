@@ -16,6 +16,12 @@ module.exports = class ErrorFactory {
 
     try {
       if (this.status.error) {
+        if (typeof this.status.payload !== "undefined") {
+          return this.res.status(this.status.HTTPcode).send({
+            msg: httpStatusCodes[this.status.HTTPcode],
+            payload: this.status.payload,
+          });
+        }
         return this.res
           .status(this.status.HTTPcode)
           .send(httpStatusCodes[this.status.HTTPcode]);

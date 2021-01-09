@@ -1,6 +1,5 @@
 const routes = require("express").Router();
 const ProductService = require("../services/productService");
-const ProductModel = require("../database/models/product");
 const ErrorFactory = require("../error");
 
 routes.post("/product", async (req, res) => {

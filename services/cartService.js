@@ -7,6 +7,12 @@ const decimalFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 module.exports = class CartService {
+  #isCookieValid(cookie) {
+    return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
+      if (err) return false;
+      return bcrypt.compareSync("true", decoded.token);
+    });
+  }
   async getCart(cookieProfile) {
     function getProductsID(cart) {
       const idList = [];
@@ -35,7 +41,7 @@ module.exports = class CartService {
       };
     }
 
-    if (cookieProfile) {
+    if (cookieProfile && this.#isCookieValid(cookieProfile)) {
       return await new ProductModel()
         .selectProductsByID(getProductsID(cookieProfile.cart))
         .then((result) => {
@@ -50,13 +56,6 @@ module.exports = class CartService {
   }
 
   async addProdOnCart(id, cookieProfile) {
-    function isCookieValid(cookie) {
-      return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
-        if (err) return false;
-        return bcrypt.compareSync("true", decoded.token);
-      });
-    }
-
     function isProductOnCart(cart, id) {
       let positions = [];
       cart.map((value, i) => {
@@ -79,7 +78,7 @@ module.exports = class CartService {
     }
 
     if (cookieProfile && cookieProfile.token) {
-      if (isCookieValid(cookieProfile)) {
+      if (this.#isCookieValid(cookieProfile)) {
         let cartIndex = isProductOnCart(cookieProfile.cart, id);
         if (cartIndex >= 0) {
           cookieProfile.cart[cartIndex].qty += 1;

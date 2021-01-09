@@ -16,7 +16,7 @@ const mongoUtil = require("./database/conection");
 
 const app = express();
 let origin =
-  process.env.NODE_ENV === "development"
+  process.env.NODE_ENV === "dev"
     ? "https://localhost:3000"
     : "https://frontend-tcc.vercel.app";
 app.use(
@@ -45,7 +45,7 @@ mongoUtil.connectToServer(function (err, client) {
   app.use(productRoute);
   app.use(cartRoute);
 
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "dev") {
     https.createServer(credentials, app).listen(process.env.PORT || 3333);
   } else {
     app.listen(process.env.PORT || 3333);
