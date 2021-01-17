@@ -13,6 +13,7 @@ module.exports = class CartService {
       return bcrypt.compareSync("true", decoded.token);
     });
   }
+
   async getCart(cookieProfile) {
     function getProductsID(cart) {
       const idList = [];
@@ -42,14 +43,18 @@ module.exports = class CartService {
     }
 
     if (cookieProfile && this.#isCookieValid(cookieProfile)) {
-      return await new ProductModel()
-        .selectProductsByID(getProductsID(cookieProfile.cart))
-        .then((result) => {
-          return {
-            error: false,
-            payload: handleProdQty(result, cookieProfile.cart),
-          };
-        });
+      if (cookieProfile.cart.length <= 0) {
+        return { error: true, HTTPcode: 404 };
+      } else {
+        return await new ProductModel()
+          .selectProductsByID(getProductsID(cookieProfile.cart))
+          .then((result) => {
+            return {
+              error: false,
+              payload: handleProdQty(result, cookieProfile.cart),
+            };
+          });
+      }
     } else {
       return { error: true, HTTPcode: 403 };
     }

@@ -9,7 +9,7 @@ module.exports = class ErrorFactory {
       200: "OK",
       400: "Email ou Senha errados",
       403: "Usuario não Logado",
-      404: "Não Encontrado",
+      404: "Nada no Carrinho",
       409: "Email ou CPF já cadastrados",
       500: "Erro Interno do Servidor",
     };
@@ -45,7 +45,7 @@ module.exports = class ErrorFactory {
       }
       return this.res.sendStatus(200);
     } catch (err) {
-      return this.res.sendStatus(500);
+      return this.res.status(500).send(httpStatusCodes[500]);
     }
   }
 };
