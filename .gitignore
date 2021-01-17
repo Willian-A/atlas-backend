@@ -1,8 +1,4 @@
-.gitignore
-/node_modules
-node_modules/
 /backup
 /cert
-*.rar
 .env
-.eslintrc.json
+node_modules/
