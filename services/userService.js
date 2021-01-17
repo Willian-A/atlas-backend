@@ -10,7 +10,7 @@ module.exports = class UserService {
       return bcrypt.compareSync("true", decoded.token);
     });
   }
-
+  //
   async register(name, email, password, cpf) {
     function userDoesntExists(result) {
       return result.length === 0;
