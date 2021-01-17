@@ -7,7 +7,7 @@ const decimalFormat = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 module.exports = class CartService {
-  #isCookieValid(cookie) {
+  isCookieValid(cookie) {
     return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
       if (err) return false;
       return bcrypt.compareSync("true", decoded.token);
@@ -42,7 +42,7 @@ module.exports = class CartService {
       };
     }
 
-    if (cookieProfile && this.#isCookieValid(cookieProfile)) {
+    if (cookieProfile && this.isCookieValid(cookieProfile)) {
       if (cookieProfile.cart.length <= 0) {
         return { error: true, HTTPcode: 404 };
       } else {
@@ -83,7 +83,7 @@ module.exports = class CartService {
     }
 
     if (cookieProfile && cookieProfile.token) {
-      if (this.#isCookieValid(cookieProfile)) {
+      if (this.isCookieValid(cookieProfile)) {
         let cartIndex = isProductOnCart(cookieProfile.cart, id);
         if (cartIndex >= 0) {
           cookieProfile.cart[cartIndex].qty += 1;
