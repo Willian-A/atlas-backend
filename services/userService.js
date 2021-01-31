@@ -51,11 +51,6 @@ module.exports = class UserService {
         action: "create",
         name: "profile",
         payload: { token: generateToken(), cart: [] },
-        configs: {
-          sameSite: "None",
-          secure: true,
-          maxAge: 3600000 * 2.5, // (seconds * time) expires in 2.5h
-        },
       };
     }
 

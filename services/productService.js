@@ -6,6 +6,7 @@ module.exports = class ProductService {
       if (result.length <= 0) {
         return { error: true, HTTPcode: 500 };
       } else {
+        result[0].price = result[0].price.toFixed(2);
         return { error: false, payload: result };
       }
     });

@@ -27,11 +27,10 @@ module.exports = class ErrorFactory {
           .send(httpStatusCodes[this.status.HTTPcode]);
       } else if (this.status.cookie) {
         if (this.status.cookie.action === "create") {
-          this.res.cookie(
-            this.status.cookie.name,
-            this.status.cookie.payload,
-            this.status.cookie.configs
-          );
+          this.res.cookie(this.status.cookie.name, this.status.cookie.payload, {
+            sameSite: "None",
+            secure: true,
+          });
         } else if (this.status.cookie.action === "update") {
           this.res.cookie(this.status.cookie.name, this.status.cookie.payload, {
             sameSite: "None",
