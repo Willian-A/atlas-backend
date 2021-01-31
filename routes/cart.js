@@ -4,7 +4,7 @@ const ErrorFactory = require("../error");
 
 routes.get("/cart", async (req, res) => {
   await new CartService()
-    .getCart(req.cookies.profile)
+    .getCartProducts(req.cookies.profile)
     .then((status) => new ErrorFactory(res, status).checkHttpCode());
 });
 

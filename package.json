@@ -27,12 +27,12 @@
         "mongodb": "^3.6.3"
     },
     "devDependencies": {
-        "eslint": "^7.4.0",
-        "eslint-config-airbnb-base": "^14.2.0",
-        "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-import": "^2.22.0",
+        "eslint": "^7.18.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-config-prettier": "^6.15.0",
+        "eslint-plugin-import": "^2.22.1",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-security": "^1.4.0",
-        "nodemon": "^2.0.4"
+        "nodemon": "^2.0.7"
     }
 }

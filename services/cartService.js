@@ -3,9 +3,7 @@ const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectID;
 
 const ProductModel = require("../database/models/product");
-const decimalFormat = new Intl.NumberFormat("en-US", {
-  minimumFractionDigits: 2,
-});
+
 module.exports = class CartService {
   isCookieValid(cookie) {
     return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
@@ -14,10 +12,10 @@ module.exports = class CartService {
     });
   }
 
-  async getCart(cookieProfile) {
-    function getProductsID(cart) {
+  async getCartProducts(cookieProfile) {
+    function getProdID(cart) {
       const idList = [];
-      cart.map((value) => {
+      cart.forEach((value) => {
         idList.push(ObjectId(value.id));
       });
       return idList;
@@ -25,20 +23,20 @@ module.exports = class CartService {
 
     function handleProdQty(dbResult, cart) {
       let cartTotal = 0;
-      cart.map((cartProd) => {
-        dbResult.map((dbProd) => {
-          if (dbProd._id == cartProd.id) {
-            let totalProdPrice = dbProd.price * cartProd.qty;
-            dbProd.total = decimalFormat.format(totalProdPrice);
-            dbProd.price = decimalFormat.format(dbProd.price);
+      cart.forEach((cartProd) => {
+        dbResult.forEach((dbProd) => {
+          if (dbProd._id.toString() === cartProd.id) {
+            let prodTotal = dbProd.price * cartProd.qty;
+            cartTotal += prodTotal;
+            dbProd.total = prodTotal.toFixed(2);
+            dbProd.price = dbProd.price.toFixed(2);
             dbProd.qty = cartProd.qty;
-            cartTotal += dbProd.price * cartProd.qty;
           }
         });
       });
       return {
         dbResult,
-        cartTotal: decimalFormat.format(cartTotal),
+        cartTotal: cartTotal.toFixed(2),
       };
     }
 
@@ -47,7 +45,7 @@ module.exports = class CartService {
         return { error: true, HTTPcode: 404 };
       } else {
         return await new ProductModel()
-          .selectProductsByID(getProductsID(cookieProfile.cart))
+          .selectProductsByID(getProdID(cookieProfile.cart))
           .then((result) => {
             return {
               error: false,
@@ -61,13 +59,13 @@ module.exports = class CartService {
   }
 
   async addProdOnCart(id, cookieProfile) {
-    function isProductOnCart(cart, id) {
-      let positions = [];
-      cart.map((value, i) => {
-        positions.push(i);
+    function isProductOnCart(id, cart) {
+      const idList = [];
+      cart.forEach((value) => {
+        idList.push(value.id);
       });
-      return positions.findIndex((value, i) => {
-        return cart[value].id === id;
+      return idList.findIndex((value) => {
+        return value.toString() == id.toString();
       });
     }
 
@@ -84,7 +82,7 @@ module.exports = class CartService {
 
     if (cookieProfile && cookieProfile.token) {
       if (this.isCookieValid(cookieProfile)) {
-        let cartIndex = isProductOnCart(cookieProfile.cart, id);
+        let cartIndex = isProductOnCart(id, cookieProfile.cart);
         if (cartIndex >= 0) {
           cookieProfile.cart[cartIndex].qty += 1;
         } else {

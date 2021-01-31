@@ -46,6 +46,7 @@ mongoUtil.connectToServer(function (err, client) {
   app.use(cartRoute);
 
   if (process.env.NODE_ENV === "dev") {
+    console.log(`DEV`);
     https.createServer(credentials, app).listen(process.env.PORT || 3333);
   } else {
     app.listen(process.env.PORT || 3333);
