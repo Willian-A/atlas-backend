@@ -1,6 +1,3 @@
-/cert
-.env
+cert/
 node_modules/
-node_modules
-/node_modules/
-/node_modules
+.env

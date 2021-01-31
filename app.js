@@ -33,11 +33,6 @@ app.get("/", async (req, res) => {
   res.send("Servidor Backend");
 });
 
-// SSL
-const privateKey = fs.readFileSync("cert/selfsigned.key", "utf8");
-const certificate = fs.readFileSync("cert/selfsigned.crt", "utf8");
-const credentials = { key: privateKey, cert: certificate };
-
 mongoUtil.connectToServer(function (err, client) {
   if (err) console.log(err);
   // start the rest of your app here
@@ -46,11 +41,14 @@ mongoUtil.connectToServer(function (err, client) {
   app.use(cartRoute);
 
   if (process.env.NODE_ENV === "dev") {
-    console.log(`DEV`);
-    https.createServer(credentials, app).listen(process.env.PORT || 3333);
+    // SSL
+    const privateKey = fs.readFileSync("cert/selfsigned.key", "utf8");
+    const certificate = fs.readFileSync("cert/selfsigned.crt", "utf8");
+    const credentials = { key: privateKey, cert: certificate };
+    console.log(`Development Server on 3333`);
+    https.createServer(credentials, app).listen(3333);
   } else {
-    app.listen(process.env.PORT || 3333);
+    console.log(`Production Server on ${process.env.PORT}`);
+    app.listen(process.env.PORT);
   }
 });
-
-console.log(`Server at: ${process.env.PORT}`);

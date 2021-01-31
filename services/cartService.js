@@ -13,7 +13,7 @@ module.exports = class CartService {
   }
 
   async getCartProducts(cookieProfile) {
-    function getProdID(cart) {
+    function getProductsIDs(cart) {
       const idList = [];
       cart.forEach((value) => {
         idList.push(ObjectId(value.id));
@@ -21,23 +21,27 @@ module.exports = class CartService {
       return idList;
     }
 
+    function formatPrices(dbResult, cartTotal) {
+      dbResult.forEach((dbProd) => {
+        dbProd.price = dbProd.price.toFixed(2);
+        dbProd.total = dbProd.total.toFixed(2);
+      });
+
+      return { dbResult, cartTotal: cartTotal.toFixed(2) };
+    }
+
     function handleProdQty(dbResult, cart) {
       let cartTotal = 0;
       cart.forEach((cartProd) => {
         dbResult.forEach((dbProd) => {
           if (dbProd._id.toString() === cartProd.id) {
-            let prodTotal = dbProd.price * cartProd.qty;
-            cartTotal += prodTotal;
-            dbProd.total = prodTotal.toFixed(2);
-            dbProd.price = dbProd.price.toFixed(2);
+            dbProd.total = dbProd.price * cartProd.qty;
             dbProd.qty = cartProd.qty;
+            cartTotal += dbProd.price * cartProd.qty;
           }
         });
       });
-      return {
-        dbResult,
-        cartTotal: cartTotal.toFixed(2),
-      };
+      return formatPrices(dbResult, cartTotal);
     }
 
     if (cookieProfile && this.isCookieValid(cookieProfile)) {
@@ -45,7 +49,7 @@ module.exports = class CartService {
         return { error: true, HTTPcode: 404 };
       } else {
         return await new ProductModel()
-          .selectProductsByID(getProdID(cookieProfile.cart))
+          .selectProductsByID(getProductsIDs(cookieProfile.cart))
           .then((result) => {
             return {
               error: false,

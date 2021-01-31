@@ -7,10 +7,14 @@ var db;
 
 module.exports = {
   connectToServer: function (callback) {
-    MongoClient.connect(uri, { useNewUrlParser: true }, function (err, client) {
-      db = client.db("atlas");
-      return callback(err);
-    });
+    MongoClient.connect(
+      uri,
+      { useNewUrlParser: true, useUnifiedTopology: true },
+      function (err, client) {
+        db = client.db("atlas");
+        return callback(err);
+      }
+    );
   },
 
   getDb: function () {
