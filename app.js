@@ -15,14 +15,10 @@ const cartRoute = require("./routes/cart.js");
 const mongoUtil = require("./database/conection");
 
 const app = express();
-let origin =
-  process.env.NODE_ENV === "dev"
-    ? "https://localhost:3000"
-    : "https://frontend-tcc.vercel.app";
 app.use(
   cors({
     credentials: true,
-    origin: origin,
+    origin: ["https://localhost:3000", "https://frontend-tcc.vercel.app"],
   })
 );
 app.use(cookieParser());
