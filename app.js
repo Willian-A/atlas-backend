@@ -21,6 +21,7 @@ let origin =
     : "https://frontend-tcc.vercel.app";
 app.use(
   cors({
+    preflightContinue: true,
     credentials: true,
     origin: origin,
   })
