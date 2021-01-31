@@ -64,12 +64,12 @@ module.exports = class CartService {
 
   async addProdOnCart(id, cookieProfile) {
     function isProductOnCart(id, cart) {
-      let positions = [];
-      cart.map((value, i) => {
-        positions.push(i);
+      const idList = [];
+      cart.forEach((value) => {
+        idList.push(value.id);
       });
-      return positions.findIndex((value, i) => {
-        return cart[value].id === id;
+      return idList.findIndex((value) => {
+        return value.toString() == id.toString();
       });
     }
 

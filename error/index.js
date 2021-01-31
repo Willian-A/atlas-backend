@@ -33,7 +33,10 @@ module.exports = class ErrorFactory {
             this.status.cookie.configs
           );
         } else if (this.status.cookie.action === "update") {
-          this.res.cookie(this.status.cookie.name, this.status.cookie.payload);
+          this.res.cookie(this.status.cookie.name, this.status.cookie.payload, {
+            sameSite: "None",
+            secure: true,
+          });
         } else if (this.status.cookie.action === "delete") {
           this.res.clearCookie(
             this.status.cookie.name,
