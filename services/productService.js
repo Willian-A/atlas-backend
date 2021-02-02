@@ -12,7 +12,7 @@ module.exports = class ProductService {
     };
   }
   async getProduct(id) {
-    return awaitthis.ProductSQL.selectProduct(id).then((result) => {
+    return await this.ProductSQL.selectProduct(id).then((result) => {
       if (result.length <= 0) {
         return { error: true, HTTPcode: 500 };
       } else {
