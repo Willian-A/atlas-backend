@@ -4,21 +4,23 @@ const jwt = require("jsonwebtoken");
 const UserModel = require("../database/models/user");
 
 module.exports = class UserService {
-  isCookieValid(cookie) {
-    return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
-      if (err) return false;
-      return bcrypt.compareSync("true", decoded.token);
-    });
+  constructor() {
+    this.UserSQL = new UserModel();
+    this.isCookieValid = (cookie) => {
+      return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
+        if (err) return false;
+        return bcrypt.compareSync("true", decoded.token);
+      });
+    };
+    this.userExists = (dbResult) => {
+      return dbResult.length != 0;
+    };
   }
   //
   async register(name, email, password, cpf) {
-    function userDoesntExists(result) {
-      return result.length === 0;
-    }
-
-    return new UserModel().selectUser(email).then((result) => {
-      if (userDoesntExists(result)) {
-        new UserModel().insertUser({
+    return this.UserSQL.selectUser(email).then((dbResult) => {
+      if (!this.userExists(dbResult)) {
+        this.UserSQL.insertUser({
           name,
           email,
           password: bcrypt.hashSync(password),
@@ -32,12 +34,6 @@ module.exports = class UserService {
   }
   //a
   async login(email, password) {
-    function userExists(result) {
-      return (
-        result.length !== 0 && bcrypt.compareSync(password, result[0].password)
-      );
-    }
-
     function generateToken() {
       let hashToken = bcrypt.hashSync("true");
       let token = jwt.sign({ token: hashToken }, process.env.SECRET, {
@@ -54,8 +50,11 @@ module.exports = class UserService {
       };
     }
 
-    return new UserModel().selectUser(email).then((result) => {
-      if (userExists(result)) {
+    return this.UserSQL.selectUser(email).then((dbResult) => {
+      if (
+        this.userExists(dbResult) &&
+        bcrypt.compareSync(password, dbResult[0].password)
+      ) {
         return { error: false, cookie: generateCookie() };
       } else {
         return { error: true, HTTPcode: 400 };

@@ -1,8 +1,18 @@
 const ProductModel = require("../database/models/product");
 
 module.exports = class ProductService {
+  constructor() {
+    this.ProductSQL = new ProductModel();
+    this.formatPrices = (dbResult) => {
+      dbResult.forEach((dbProd) => {
+        dbProd.price = dbProd.price.toFixed(2);
+      });
+
+      return dbResult;
+    };
+  }
   async getProduct(id) {
-    return await new ProductModel().selectProduct(id).then((result) => {
+    return awaitthis.ProductSQL.selectProduct(id).then((result) => {
       if (result.length <= 0) {
         return { error: true, HTTPcode: 500 };
       } else {
@@ -13,31 +23,21 @@ module.exports = class ProductService {
   }
 
   async getLimitedProcuts(qty) {
-    function formatPrices(dbResult) {
-      dbResult.forEach((dbProd) => {
-        dbProd.price = dbProd.price.toFixed(2);
-      });
-
-      return dbResult;
-    }
-
-    return await new ProductModel()
-      .selectLimitedProducts(qty)
-      .then((result) => {
-        if (result.length <= 0) {
-          return { error: true, HTTPcode: 500 };
-        } else {
-          return { error: false, payload: formatPrices(result) };
-        }
-      });
-  }
-
-  async getAllProducts() {
-    return await new ProductModel().selectProducts().then((result) => {
+    return await this.ProductSQL.selectLimitedProducts(qty).then((result) => {
       if (result.length <= 0) {
         return { error: true, HTTPcode: 500 };
       } else {
-        return { error: false, payload: result };
+        return { error: false, payload: this.formatPrices(result) };
+      }
+    });
+  }
+
+  async getAllProducts() {
+    return await this.ProductSQL.selectProducts().then((result) => {
+      if (result.length <= 0) {
+        return { error: true, HTTPcode: 500 };
+      } else {
+        return { error: false, payload: this.formatPrices(result) };
       }
     });
   }
