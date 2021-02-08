@@ -11,6 +11,7 @@ module.exports = class ProductService {
       return dbResult;
     };
   }
+
   async getProduct(id) {
     return await this.ProductSQL.selectProduct(id).then((result) => {
       if (result.length <= 0) {

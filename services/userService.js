@@ -6,14 +6,14 @@ const UserModel = require("../database/models/user");
 module.exports = class UserService {
   constructor() {
     this.UserSQL = new UserModel();
+    this.userExists = (dbResult) => {
+      return dbResult.length != 0;
+    };
     this.isCookieValid = (cookie) => {
       return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
         if (err) return false;
         return bcrypt.compareSync("true", decoded.token);
       });
-    };
-    this.userExists = (dbResult) => {
-      return dbResult.length != 0;
     };
   }
   //

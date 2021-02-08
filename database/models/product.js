@@ -11,7 +11,7 @@ module.exports = class ProductModel {
     }
   }
 
-  async selectProductsByID(array) {
+  async selectByID(array) {
     try {
       var db = mongoUtil.getDb();
       return await db

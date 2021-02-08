@@ -4,65 +4,61 @@ const ObjectId = require("mongodb").ObjectID;
 
 const ProductModel = require("../database/models/product");
 
-module.exports = class CartService {
-  isCookieValid(cookie) {
-    return jwt.verify(cookie.token, process.env.SECRET, (err, decoded) => {
-      if (err) return false;
-      return bcrypt.compareSync("true", decoded.token);
-    });
+module.exports = function CartService(cookieProfile) {
+  const ProductSQL = new ProductModel();
+  let cookie = cookieProfile;
+  let cart = cookieProfile.cart;
+  let token = cookieProfile.token;
+
+  // private
+  function prodsID() {
+    let idList = [];
+    cart.forEach((value) => idList.push(ObjectId(value.id)));
+    return idList;
   }
 
-  async getCartProducts(cookieProfile) {
-    function getProductsIDs(cart) {
-      const idList = [];
-      cart.forEach((value) => {
-        idList.push(ObjectId(value.id));
+  // private
+  function cookieIsValid() {
+    if (cookie && token) {
+      return jwt.verify(token, process.env.SECRET, (err, decoded) => {
+        if (err) return false;
+        return bcrypt.compareSync("true", decoded.token);
       });
-      return idList;
-    }
+    } else return false;
+  }
 
-    function formatPrices(dbResult, cartTotal) {
+  function handlePrices(dbResult, cart) {
+    let cartTotal = 0;
+    cart.forEach((cartProd) => {
       dbResult.forEach((dbProd) => {
-        dbProd.price = dbProd.price.toFixed(2);
-        dbProd.total = dbProd.total.toFixed(2);
+        if (dbProd._id.toString() === cartProd.id) {
+          dbProd.qty = cartProd.qty;
+          dbProd.total = dbProd.price * cartProd.qty;
+          cartTotal += dbProd.total;
+          dbProd.total = dbProd.total.toFixed(2);
+          dbProd.price = dbProd.price.toFixed(2);
+        }
       });
+    });
+    return { dbResult, cartTotal: cartTotal.toFixed(2) };
+  }
 
-      return { dbResult, cartTotal: cartTotal.toFixed(2) };
-    }
-
-    function handleProdQty(dbResult, cart) {
-      let cartTotal = 0;
-      cart.forEach((cartProd) => {
-        dbResult.forEach((dbProd) => {
-          if (dbProd._id.toString() === cartProd.id) {
-            dbProd.total = dbProd.price * cartProd.qty;
-            dbProd.qty = cartProd.qty;
-            cartTotal += dbProd.price * cartProd.qty;
-          }
+  // public
+  async function getCart() {
+    if (cookieIsValid()) {
+      if (cart.length > 0) {
+        return await ProductSQL.selectByID(prodsID(cart)).then((result) => {
+          return {
+            error: false,
+            payload: handlePrices(result, cart),
+          };
         });
-      });
-      return formatPrices(dbResult, cartTotal);
-    }
-
-    if (cookieProfile && this.isCookieValid(cookieProfile)) {
-      if (cookieProfile.cart.length <= 0) {
-        return { error: true, HTTPcode: 404 };
-      } else {
-        return await new ProductModel()
-          .selectProductsByID(getProductsIDs(cookieProfile.cart))
-          .then((result) => {
-            return {
-              error: false,
-              payload: handleProdQty(result, cookieProfile.cart),
-            };
-          });
-      }
-    } else {
-      return { error: true, HTTPcode: 403 };
+      } else return { error: true, HTTPcode: 404 };
     }
   }
 
-  async addProdOnCart(id, cookieProfile) {
+  // public
+  async function addOnCart(id) {
     function isProductOnCart(id, cart) {
       const idList = [];
       cart.forEach((value) => {
@@ -73,35 +69,29 @@ module.exports = class CartService {
       });
     }
 
-    function createCookie() {
+    if (cookieIsValid()) {
+      let productIndex = isProductOnCart(id, cart);
+      if (productIndex >= 0) {
+        cart[productIndex].qty += 1;
+      } else {
+        cart.push({ id, qty: 1 });
+      }
       return {
-        action: "update",
-        name: "profile",
-        payload: {
-          token: cookieProfile.token,
-          cart: cookieProfile.cart,
+        error: false,
+        cookie: {
+          action: "update",
+          name: "profile",
+          payload: {
+            token: token,
+            cart: cart,
+          },
         },
       };
-    }
-
-    if (cookieProfile && cookieProfile.token) {
-      if (this.isCookieValid(cookieProfile)) {
-        let cartIndex = isProductOnCart(id, cookieProfile.cart);
-        if (cartIndex >= 0) {
-          cookieProfile.cart[cartIndex].qty += 1;
-        } else {
-          cookieProfile.cart.push({ id, qty: 1 });
-        }
-        return { error: false, cookie: createCookie() };
-      } else {
-        return { error: true, HTTPcode: 403 };
-      }
-    } else {
-      return { error: true, HTTPcode: 403 };
-    }
+    } else return { error: true, HTTPcode: 403 };
   }
 
-  async removeCartProduct(id, profile) {
-    return { error: false, payload: result };
-  }
+  return {
+    getCart: getCart,
+    addOnCart: addOnCart,
+  };
 };
