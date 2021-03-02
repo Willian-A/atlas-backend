@@ -17,7 +17,7 @@ module.exports = {
     );
   },
 
-  getDb: function () {
+  getDB: function () {
     return db;
   },
 };
