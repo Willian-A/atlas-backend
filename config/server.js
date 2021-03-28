@@ -20,6 +20,7 @@ consign()
   .then("config/dbConnection.js")
   .then("app/models")
   .then("app/controllers")
+  .then("app/middlewares")
   .into(app);
 
 module.exports = app;
