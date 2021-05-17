@@ -1,7 +1,5 @@
 const MongoClient = require("mongodb").MongoClient;
-const uri =
-  process.env.DB_URI ||
-  "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false";
+const uri = "mongodb+srv://griffin:root@atlas.fe6gk.mongodb.net/Atlas?retryWrites=true&w=majority";
 
 var db;
 
